@@ -1,0 +1,6 @@
+BasedOnStyle: Google
+SortIncludes: false
+NamespaceIndentation: All
+BreakBeforeBraces: Attach
+ColumnLimit: 90
+PointerAlignment: Left
