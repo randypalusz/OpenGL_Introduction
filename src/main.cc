@@ -53,7 +53,7 @@ int main() {
 
   // Set the clear color to a nice green
   // glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
-  glClearColor(0.0f, 0.0f, 0.0f, 0.9f);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
   float positions[] = {
       -0.5f, -0.5f,  // vertex 1
