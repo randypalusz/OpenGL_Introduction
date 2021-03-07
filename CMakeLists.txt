@@ -18,13 +18,14 @@ set(SOURCES
 )
 
 set(HEADERS 
-  ${SRC_DIR}/node.h
+  ${SRC_DIR}/GLUtility.hpp
 )
 
 # adding executable, changing executable suffix for windows
 set(CMAKE_EXECUTABLE_SUFFIX ".cc")
 set(${PROJECT_NAME} ${PROJECT_NAME}.cc)
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+add_executable(Example ${SRC_DIR}/basic.cc ${HEADERS})
 target_include_directories(${PROJECT_NAME} PRIVATE "${SRC_DIR}")
 
 ## GLFW
@@ -38,6 +39,10 @@ add_subdirectory("${GLFW_DIR}")
 target_link_libraries(${PROJECT_NAME} "glfw" "${GLFW_LIBRARIES}")
 target_include_directories(${PROJECT_NAME} PRIVATE "${GLFW_DIR}/include")
 target_compile_definitions(${PROJECT_NAME} PRIVATE "GLFW_INCLUDE_NONE")
+#
+target_link_libraries(Example "glfw" "${GLFW_LIBRARIES}")
+target_include_directories(Example PRIVATE "${GLFW_DIR}/include")
+target_compile_definitions(Example PRIVATE "GLFW_INCLUDE_NONE")
 
 ## glad
 # https://github.com/aaronmjacobs/InitGL
@@ -49,3 +54,6 @@ add_library("glad" ${GLAD_DIR}/src/glad.c)
 target_include_directories("glad" PRIVATE ${GLAD_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${GLAD_DIR}/include)
 target_link_libraries(${PROJECT_NAME} "glad" ${CMAKE_DL_LIBS})
+
+target_include_directories(Example PRIVATE ${GLAD_DIR}/include)
+target_link_libraries(Example "glad" ${CMAKE_DL_LIBS})
