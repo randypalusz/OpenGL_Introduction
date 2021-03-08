@@ -4,8 +4,8 @@ clean=0
 
 while [ -n "$1" ]; do # while loop starts
 	case "$1" in
-	--clean) echo "--clean option passed" 
-           clean=1 ;; # Message for -a option
+	--clean) echo "--clean option passed, regenerating all build files" 
+           clean=1 ;; 
 	*) echo "Option $1 not recognized" ;; # In case you typed a different option other than a,b,c
 	esac
 
