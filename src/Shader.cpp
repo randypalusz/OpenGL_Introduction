@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include <string>
 #include <assert.h>
@@ -64,9 +65,8 @@ auto Shader::LoadShaderFromPath(const std::string& path) -> std::string {
   return content;
 }
 
-void Shader::setUniform4f(const std::string& uniformName, float x, float y, float z,
-                          float w) const {
+void Shader::setUniform4f(const std::string& uniformName, glm::vec4 vals) const {
   int location = glGetUniformLocation(m_handle, uniformName.c_str());
   assert(location != -1);
-  glUniform4f(location, x, y, z, w);
+  glUniform4f(location, vals.x, vals.y, vals.z, vals.w);
 }

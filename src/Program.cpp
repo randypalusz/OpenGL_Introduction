@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include <stdio.h>
 #include <iostream>
@@ -136,7 +137,7 @@ void Program::run() {
     shader.use();
 
     // set color uniform for active shader
-    shader.setUniform4f("u_Color", r, g, b, a);
+    shader.setUniform4f("u_Color", glm::vec4(r, g, b, a));
 
     // bind vao
     vao.bind();
