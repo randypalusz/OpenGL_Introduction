@@ -63,16 +63,43 @@ void Program::run() {
       -0.5f, 0.5f    // vertex 4
   };
 
+  float positions2[] = {
+      -1.0f, -1.0f,  // vertex 1
+      0.0f,  -1.0f,  // vertex 2
+      0.0f,  0.0f,   // vertex 3
+      -1.0f, 0.0f    // vertex 4
+  };
+
   unsigned int indices[] = {0, 1, 2,   // triangle 1
                             2, 3, 0};  // triangle 2
 
+  // setting up index buffer to define the order that indices are drawn in position arrays
+  VertexBufferObject ibo{VertexBufferType::IndexBuffer};
+  // (starts at index 0, length = 6 unsigned ints, data is in the indices array)
+  ibo.setAttributes(0, sizeof(unsigned int) * 6, indices);
+
+  // vertex array object contains pointers to where different attributes in the VBO reside
+  // VAO also contains a pointer to the index buffer that determines index draw order
   VertexArrayObject vao;
   VertexBufferObject vbo{VertexBufferType::VertexBuffer};
+  // (bind vertex buffer, choose index 0, 2 elements for this attribute(x,y), float,
+  //  distance from this attribute to the next one is the length of two floats in bytes,
+  //  the first position starts at index 0 in the vertex array)
   vao.setAttributes(vbo, 0, 2, GL_FLOAT, sizeof(float) * 2, 0);
+  // (bind vertex buffer, choose index 1, 1 element for this attribute (just index), uint,
+  //  distance from this attribute to the next one is the length of one uint in bytes,
+  //  the first position starts at index 0 in the index array)
+  vao.setAttributes(ibo, 1, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
+  // (starts at index 0, length = 8 floats, data is in the positions array)
   vbo.setAttributes(0, sizeof(float) * 8, positions);
 
-  VertexBufferObject ibo{VertexBufferType::IndexBuffer};
-  ibo.setAttributes(0, sizeof(unsigned int) * 6, indices);
+  // using this to demonstrate a second rectangle
+  VertexArrayObject vao2;
+  VertexBufferObject vbo2{VertexBufferType::VertexBuffer};
+  vao2.setAttributes(ibo, 1, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
+  vao2.setAttributes(vbo2, 0, 2, GL_FLOAT, sizeof(float) * 2, 0);
+  vbo2.setAttributes(0, sizeof(float) * 8, positions2);
+  // rect2 end
 
   unsigned int program =
       ShaderUtils::CreateShader("res/VertexShader.glsl", "res/FragmentShader.glsl");
@@ -116,12 +143,11 @@ void Program::run() {
     // set color uniform for active shader
     glUniform4f(colorUniformLocation, r, g, b, a);
 
-    // bind index buffer
-    ibo.bind();
-
     // bind vao
     vao.bind();
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
+    vao2.bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     glfwSwapBuffers(m_window);
