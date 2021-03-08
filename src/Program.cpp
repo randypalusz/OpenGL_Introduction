@@ -98,7 +98,7 @@ void Program::run() {
     glClear(GL_COLOR_BUFFER_BIT);
     t1 = std::chrono::high_resolution_clock::now();
 
-    if (std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() >= 13) {
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() >= 25) {
       // reset the start point
       t0 = std::chrono::high_resolution_clock::now();
       // update a to scroll between 0 and 1.0f, back to 0
