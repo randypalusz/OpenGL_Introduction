@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <chrono>
 
 #include "Program.hpp"
 #include "Shader.hpp"
@@ -85,13 +86,33 @@ void Program::run() {
 
   int colorUniformLocation = glGetUniformLocation(program, "u_Color");
   assert(colorUniformLocation != -1);
-  glUniform4f(colorUniformLocation, 1.0f, 0.0f, 1.0f, 1.0f);
 
+  auto t0 = std::chrono::high_resolution_clock::now();
+  auto t1 = std::chrono::high_resolution_clock::now();
+  float r = 0.15f;
+  float g = 0.6f;
+  float b = 0.4f;
+  float a = 1.0f;
+  float inc = 0.05f;
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT);
+    t1 = std::chrono::high_resolution_clock::now();
+
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() >= 13) {
+      // reset the start point
+      t0 = std::chrono::high_resolution_clock::now();
+      // update a to scroll between 0 and 1.0f, back to 0
+      if (r < 0.0f) {
+        inc = 0.05f;
+      } else if (r > 1.0f) {
+        inc = -0.05f;
+      }
+    }
+    r += inc;
 
     // this was used before index buffer was used
     // glDrawArrays(GL_TRIANGLES, 0, 3);
+    glUniform4f(colorUniformLocation, r, g, b, a);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     glfwSwapBuffers(m_window);
