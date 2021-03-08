@@ -8,6 +8,8 @@
 
 #include "Program.hpp"
 #include "Shader.hpp"
+#include "vao.hpp"
+#include "vbo.hpp"
 
 auto Program::init() -> int {
   int glfwInitRes = glfwInit();
@@ -64,22 +66,13 @@ void Program::run() {
   unsigned int indices[] = {0, 1, 2,   // triangle 1
                             2, 3, 0};  // triangle 2
 
-  unsigned int vertexArrayObject;
-  glGenVertexArrays(1, &vertexArrayObject);
-  glBindVertexArray(vertexArrayObject);
+  VertexArrayObject vao;
+  VertexBufferObject vbo{VertexBufferType::VertexBuffer};
+  vao.setAttributes(vbo, 0, 2, GL_FLOAT, sizeof(float) * 2, 0);
+  vbo.setAttributes(0, sizeof(float) * 8, positions);
 
-  unsigned int vertexBufferObject;
-  glGenBuffers(1, &vertexBufferObject);
-  glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, positions, GL_STATIC_DRAW);
-
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
-
-  unsigned int indexBufferObject;
-  glGenBuffers(1, &indexBufferObject);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 6, indices, GL_STATIC_DRAW);
+  VertexBufferObject ibo{VertexBufferType::IndexBuffer};
+  ibo.setAttributes(0, sizeof(unsigned int) * 6, indices);
 
   unsigned int program =
       ShaderUtils::CreateShader("res/VertexShader.glsl", "res/FragmentShader.glsl");
@@ -117,17 +110,18 @@ void Program::run() {
       r += inc;
     }
 
-    // activate shaders
+    // enable correct shaders
     glUseProgram(program);
 
-    // set uniform for active shader
+    // set color uniform for active shader
     glUniform4f(colorUniformLocation, r, g, b, a);
 
     // bind index buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+    ibo.bind();
 
     // bind vao
-    glBindVertexArray(vertexArrayObject);
+    vao.bind();
+
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     glfwSwapBuffers(m_window);

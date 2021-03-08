@@ -19,12 +19,16 @@ set(SOURCES
   ${SRC_DIR}/Program.cpp
   ${SRC_DIR}/GLUtility.cpp
   ${SRC_DIR}/Shader.cpp
+  ${SRC_DIR}/vao.cpp
+  ${SRC_DIR}/vbo.cpp
 )
 
 set(HEADERS 
   ${SRC_DIR}/GLUtility.hpp
   ${SRC_DIR}/Program.hpp
   ${SRC_DIR}/Shader.hpp
+  ${SRC_DIR}/vao.hpp
+  ${SRC_DIR}/vbo.hpp
 )
 
 # adding executable, changing executable suffix for windows
