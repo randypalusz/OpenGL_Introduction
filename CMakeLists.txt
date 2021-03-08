@@ -15,10 +15,13 @@ set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set(SOURCES
   ${SRC_DIR}/main.cc
+  ${SRC_DIR}/Program.cpp
+  ${SRC_DIR}/GLUtility.cpp
 )
 
 set(HEADERS 
   ${SRC_DIR}/GLUtility.hpp
+  ${SRC_DIR}/Program.hpp
 )
 
 # adding executable, changing executable suffix for windows
