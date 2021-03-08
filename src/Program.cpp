@@ -64,21 +64,21 @@ void Program::run() {
   unsigned int indices[] = {0, 1, 2,   // triangle 1
                             2, 3, 0};  // triangle 2
 
-  unsigned int vao;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
+  unsigned int vertexArrayObject;
+  glGenVertexArrays(1, &vertexArrayObject);
+  glBindVertexArray(vertexArrayObject);
 
-  unsigned int buffer;
-  glGenBuffers(1, &buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, buffer);
+  unsigned int vertexBufferObject;
+  glGenBuffers(1, &vertexBufferObject);
+  glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, positions, GL_STATIC_DRAW);
 
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
-  unsigned int ibo;
-  glGenBuffers(1, &ibo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+  unsigned int indexBufferObject;
+  glGenBuffers(1, &indexBufferObject);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 6, indices, GL_STATIC_DRAW);
 
   unsigned int program =
@@ -87,6 +87,12 @@ void Program::run() {
 
   int colorUniformLocation = glGetUniformLocation(program, "u_Color");
   assert(colorUniformLocation != -1);
+
+  // clear bindings
+  glBindVertexArray(0);
+  glUseProgram(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   auto t0 = std::chrono::high_resolution_clock::now();
   auto t1 = std::chrono::high_resolution_clock::now();
@@ -111,9 +117,17 @@ void Program::run() {
       r += inc;
     }
 
-    // this was used before index buffer was used
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    // activate shaders
+    glUseProgram(program);
+
+    // set uniform for active shader
     glUniform4f(colorUniformLocation, r, g, b, a);
+
+    // bind index buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+
+    // bind vao
+    glBindVertexArray(vertexArrayObject);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     glfwSwapBuffers(m_window);

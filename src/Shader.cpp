@@ -48,6 +48,7 @@ auto ShaderUtils::CompileShader(unsigned int shaderType, const std::string& shad
     std::cout << "Failed to Compile " << shaderTypeToString(shaderType)
               << ", message: " << message << std::endl;
     std::cout << "Shader Source: \n" << shaderCode << std::endl;
+    free(message);
     glDeleteShader(id);
     return 0;
   }
