@@ -54,9 +54,13 @@ void Program::run() {
 
   float positions[] = {
       -0.5f, -0.5f,  // vertex 1
-      0.0f,  0.5f,   // vertex 2
-      0.5f,  -0.5f   // vertex 3
+      0.5f,  -0.5f,  // vertex 2
+      0.5f,  0.5f,   // vertex 3
+      -0.5f, 0.5f    // vertex 4
   };
+
+  unsigned int indices[] = {0, 1, 2,   // triangle 1
+                            2, 3, 0};  // triangle 2
 
   unsigned int vao;
   glGenVertexArrays(1, &vao);
@@ -65,20 +69,30 @@ void Program::run() {
   unsigned int buffer;
   glGenBuffers(1, &buffer);
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6, positions, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, positions, GL_STATIC_DRAW);
 
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
+  unsigned int ibo;
+  glGenBuffers(1, &ibo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 6, indices, GL_STATIC_DRAW);
 
   unsigned int program =
       ShaderUtils::CreateShader("res/VertexShader.glsl", "res/FragmentShader.glsl");
   glUseProgram(program);
 
+  int colorUniformLocation = glGetUniformLocation(program, "u_Color");
+  assert(colorUniformLocation != -1);
+  glUniform4f(colorUniformLocation, 1.0f, 0.0f, 1.0f, 1.0f);
+
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    // glDrawElements(GL_TRIANGLES, 3, GL_FLOAT, nullptr);
+    // this was used before index buffer was used
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     glfwSwapBuffers(m_window);
     glfwPollEvents();
