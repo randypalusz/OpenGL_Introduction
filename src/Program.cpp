@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <chrono>
+#include <assert.h>
 
 #include "Program.hpp"
 #include "Shader.hpp"
@@ -98,7 +99,7 @@ void Program::run() {
     glClear(GL_COLOR_BUFFER_BIT);
     t1 = std::chrono::high_resolution_clock::now();
 
-    if (std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() >= 25) {
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() >= 50) {
       // reset the start point
       t0 = std::chrono::high_resolution_clock::now();
       // update a to scroll between 0 and 1.0f, back to 0
@@ -107,8 +108,8 @@ void Program::run() {
       } else if (r > 1.0f) {
         inc = -0.05f;
       }
+      r += inc;
     }
-    r += inc;
 
     // this was used before index buffer was used
     // glDrawArrays(GL_TRIANGLES, 0, 3);
