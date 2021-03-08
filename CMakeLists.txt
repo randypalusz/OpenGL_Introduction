@@ -12,16 +12,19 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(RES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/res)
 
 set(SOURCES
   ${SRC_DIR}/main.cc
   ${SRC_DIR}/Program.cpp
   ${SRC_DIR}/GLUtility.cpp
+  ${SRC_DIR}/Shader.cpp
 )
 
 set(HEADERS 
   ${SRC_DIR}/GLUtility.hpp
   ${SRC_DIR}/Program.hpp
+  ${SRC_DIR}/Shader.hpp
 )
 
 # adding executable, changing executable suffix for windows
@@ -60,3 +63,6 @@ target_link_libraries(${PROJECT_NAME} "glad" ${CMAKE_DL_LIBS})
 
 target_include_directories(Example PRIVATE ${GLAD_DIR}/include)
 target_link_libraries(Example "glad" ${CMAKE_DL_LIBS})
+
+## copying shaders into build directory
+file(COPY ${RES_DIR} DESTINATION res)

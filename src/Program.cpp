@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Program.hpp"
+#include "Shader.hpp"
 
 auto Program::init() -> int {
   int glfwInitRes = glfwInit();
@@ -57,18 +58,27 @@ void Program::run() {
       0.5f,  -0.5f   // vertex 3
   };
 
+  unsigned int vao;
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+
   unsigned int buffer;
   glGenBuffers(1, &buffer);
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6, positions, GL_STATIC_DRAW);
 
-  // glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
+  unsigned int program =
+      ShaderUtils::CreateShader("res/VertexShader.glsl", "res/FragmentShader.glsl");
+  glUseProgram(program);
 
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glDrawElements(GL_TRIANGLES, 3, GL_FLOAT, nullptr);
 
     glfwSwapBuffers(m_window);
     glfwPollEvents();
