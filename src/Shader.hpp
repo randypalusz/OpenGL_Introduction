@@ -3,15 +3,19 @@
 
 #include <string>
 
-class ShaderUtils {
+class Shader {
  public:
-  static unsigned int CreateShader(const std::string& vertexShaderPath,
-                                   const std::string& fragmentShaderPath);
+  Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+  // static unsigned int CreateShader(const std::string& vertexShaderPath,
+  //                                  const std::string& fragmentShaderPath);
+  void use() const;
+  void setUniform4f(const std::string& uniformName, float x, float y, float z,
+                    float w) const;
 
  private:
-  static unsigned int CompileShader(unsigned int type, const std::string& src);
-  static std::string LoadShaderFromPath(const std::string& path);
-  ShaderUtils() {}
+  unsigned int CompileShader(unsigned int type, const std::string& src);
+  std::string LoadShaderFromPath(const std::string& path);
+  unsigned int m_handle;
 };
 
 #endif

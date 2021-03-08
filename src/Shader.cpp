@@ -8,29 +8,30 @@
 #include "Shader.hpp"
 #include "GLUtility.hpp"
 
-auto ShaderUtils::CreateShader(const std::string& vsPath, const std ::string& fsPath)
-    -> unsigned int {
-  std::string vs = LoadShaderFromPath(vsPath);
-  std::string fs = LoadShaderFromPath(fsPath);
-  unsigned int program = glCreateProgram();
+Shader::Shader(const std::string& vertexShaderPath,
+               const std::string& fragmentShaderPath) {
+  std::string vs = LoadShaderFromPath(vertexShaderPath);
+  std::string fs = LoadShaderFromPath(fragmentShaderPath);
+  m_handle = glCreateProgram();
   unsigned int vsCompiled = CompileShader(GL_VERTEX_SHADER, vs);
   unsigned int fsCompiled = CompileShader(GL_FRAGMENT_SHADER, fs);
 
   assert(vsCompiled != 0);
   assert(fsCompiled != 0);
 
-  glAttachShader(program, vsCompiled);
-  glAttachShader(program, fsCompiled);
+  glAttachShader(m_handle, vsCompiled);
+  glAttachShader(m_handle, fsCompiled);
 
-  glLinkProgram(program);
-  glValidateProgram(program);
+  glLinkProgram(m_handle);
+  glValidateProgram(m_handle);
 
   glDeleteShader(vsCompiled);
   glDeleteShader(fsCompiled);
-  return program;
 }
 
-auto ShaderUtils::CompileShader(unsigned int shaderType, const std::string& shaderCode)
+void Shader::use() const { glUseProgram(m_handle); }
+
+auto Shader::CompileShader(unsigned int shaderType, const std::string& shaderCode)
     -> unsigned int {
   unsigned int id = glCreateShader(shaderType);
   const char* src = shaderCode.c_str();
@@ -56,9 +57,16 @@ auto ShaderUtils::CompileShader(unsigned int shaderType, const std::string& shad
   return id;
 }
 
-auto ShaderUtils::LoadShaderFromPath(const std::string& path) -> std::string {
+auto Shader::LoadShaderFromPath(const std::string& path) -> std::string {
   std::ifstream ifs(path);
   std::string content((std::istreambuf_iterator<char>(ifs)),
                       std::istreambuf_iterator<char>());
   return content;
+}
+
+void Shader::setUniform4f(const std::string& uniformName, float x, float y, float z,
+                          float w) const {
+  int location = glGetUniformLocation(m_handle, uniformName.c_str());
+  assert(location != -1);
+  glUniform4f(location, x, y, z, w);
 }

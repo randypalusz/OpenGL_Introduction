@@ -101,12 +101,7 @@ void Program::run() {
   vbo2.setAttributes(0, sizeof(float) * 8, positions2);
   // rect2 end
 
-  unsigned int program =
-      ShaderUtils::CreateShader("res/VertexShader.glsl", "res/FragmentShader.glsl");
-  glUseProgram(program);
-
-  int colorUniformLocation = glGetUniformLocation(program, "u_Color");
-  assert(colorUniformLocation != -1);
+  Shader shader("res/VertexShader.glsl", "res/FragmentShader.glsl");
 
   // clear bindings
   glBindVertexArray(0);
@@ -138,10 +133,10 @@ void Program::run() {
     }
 
     // enable correct shaders
-    glUseProgram(program);
+    shader.use();
 
     // set color uniform for active shader
-    glUniform4f(colorUniformLocation, r, g, b, a);
+    shader.setUniform4f("u_Color", r, g, b, a);
 
     // bind vao
     vao.bind();
