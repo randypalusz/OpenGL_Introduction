@@ -13,7 +13,7 @@ GLFWwindow* init() {
   }
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
@@ -33,11 +33,12 @@ GLFWwindow* init() {
     glfwTerminate();
     return nullptr;
   }
-
+#ifdef _WIN32
   // enable debug output after glad is loaded
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(MessageCallback, 0);
   // end enable debug output
+#endif
 
   std::cout << glGetString(GL_VERSION) << std::endl;
 
