@@ -10,6 +10,8 @@ class VertexArrayObject {
  public:
   VertexArrayObject();
   ~VertexArrayObject();
+  // delete copy constructor
+  VertexArrayObject(const VertexArrayObject&) = delete;
   void bind() const;
   void destroy();
   // using a const reference here to avoid the destructor being called

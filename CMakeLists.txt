@@ -21,6 +21,7 @@ set(SOURCES
   ${SRC_DIR}/Shader.cpp
   ${SRC_DIR}/vao.cpp
   ${SRC_DIR}/vbo.cpp
+  ${SRC_DIR}/Texture.cpp
 )
 
 set(HEADERS 
@@ -29,6 +30,7 @@ set(HEADERS
   ${SRC_DIR}/Shader.hpp
   ${SRC_DIR}/vao.hpp
   ${SRC_DIR}/vbo.hpp
+  ${SRC_DIR}/Texture.hpp
 )
 
 # adding executable, changing executable suffix for windows

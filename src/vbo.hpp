@@ -11,6 +11,8 @@ class VertexBufferObject {
  public:
   VertexBufferObject(VertexBufferType type);
   ~VertexBufferObject();
+  // delete copy constructor
+  VertexBufferObject(const VertexBufferObject&) = delete;
   void bind() const;
   void destroy();
   void setAttributes(size_t offsetInBytes, size_t numBytes, void* data);

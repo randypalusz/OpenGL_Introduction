@@ -7,8 +7,6 @@
 class Shader {
  public:
   Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
-  // static unsigned int CreateShader(const std::string& vertexShaderPath,
-  //                                  const std::string& fragmentShaderPath);
   void use() const;
   void setUniform4f(const std::string& uniformName, glm::vec4 vals) const;
 
