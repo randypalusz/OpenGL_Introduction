@@ -65,10 +65,10 @@ void Program::run() {
   };
 
   float positions2[] = {
-      -1.0f, -1.0f,  // vertex 1
-      0.0f,  -1.0f,  // vertex 2
-      0.0f,  0.0f,   // vertex 3
-      -1.0f, 0.0f    // vertex 4
+      -1.0f, -1.0f,   // vertex 1
+      0.0f,  -1.0f,   // vertex 2
+      0.0f,  -0.25f,  // vertex 3
+      -1.0f, 0.0f     // vertex 4
   };
 
   unsigned int indices[] = {0, 1, 2,   // triangle 1
@@ -117,7 +117,6 @@ void Program::run() {
   float b = 0.4f;
   float a = 1.0f;
   float inc = 0.05f;
-  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT);
     t1 = std::chrono::high_resolution_clock::now();
@@ -142,9 +141,16 @@ void Program::run() {
 
     // bind vao
     vao.bind();
+
+    // set polygon draw mode
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    // draw
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
+    shader.setUniform4f("u_Color", glm::vec4(1.0f, g, b, a));
     vao2.bind();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     glfwSwapBuffers(m_window);
