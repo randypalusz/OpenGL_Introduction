@@ -117,6 +117,7 @@ void Program::run() {
   float b = 0.4f;
   float a = 1.0f;
   float inc = 0.05f;
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT);
     t1 = std::chrono::high_resolution_clock::now();
