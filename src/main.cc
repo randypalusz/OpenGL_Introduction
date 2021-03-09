@@ -6,6 +6,8 @@
 
 #include "Program.hpp"
 
+#include <gli/gli.hpp>
+
 int main() {
 #ifdef _WIN32
   Program p{1280, 720, 4, 6};

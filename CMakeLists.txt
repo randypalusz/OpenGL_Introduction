@@ -72,5 +72,9 @@ target_link_libraries(Example "glad" ${CMAKE_DL_LIBS})
 set(GLM_DIR ${LIB_DIR}/glm)
 target_include_directories(${PROJECT_NAME} PRIVATE ${GLM_DIR})
 
+## gli (image library)
+set(GLI_DIR ${LIB_DIR}/gli)
+target_include_directories(${PROJECT_NAME} PRIVATE ${GLI_DIR})
+
 ## copying shaders into build directory
 file(COPY ${RES_DIR} DESTINATION .)
