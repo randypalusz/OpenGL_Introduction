@@ -16,7 +16,7 @@ set(RES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/res)
 
 set(SOURCES
   ${SRC_DIR}/main.cc
-  ${SRC_DIR}/Program.cpp
+  ${SRC_DIR}/Application.cpp
   ${SRC_DIR}/GLUtility.cpp
   ${SRC_DIR}/Shader.cpp
   ${SRC_DIR}/vao.cpp
@@ -26,7 +26,7 @@ set(SOURCES
 
 set(HEADERS 
   ${SRC_DIR}/GLUtility.hpp
-  ${SRC_DIR}/Program.hpp
+  ${SRC_DIR}/Application.hpp
   ${SRC_DIR}/Shader.hpp
   ${SRC_DIR}/vao.hpp
   ${SRC_DIR}/vbo.hpp

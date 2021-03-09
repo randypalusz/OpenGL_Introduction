@@ -4,13 +4,13 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "Program.hpp"
+#include "Application.hpp"
 
 int main() {
 #ifdef _WIN32
-  Program p{1280, 720, 4, 6};
+  Application p{1280, 720, 4, 6};
 #else
-  Program p{1280, 720, 4, 1};
+  Application p{1280, 720, 4, 1};
 #endif
 
   if (!p.init()) {

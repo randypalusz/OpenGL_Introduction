@@ -7,12 +7,12 @@
 #include <chrono>
 #include <assert.h>
 
-#include "Program.hpp"
+#include "Application.hpp"
 #include "Shader.hpp"
 #include "vao.hpp"
 #include "vbo.hpp"
 
-auto Program::init() -> int {
+auto Application::init() -> int {
   int glfwInitRes = glfwInit();
   if (!glfwInitRes) {
     fprintf(stderr, "Unable to initialize GLFW\n");
@@ -53,7 +53,7 @@ auto Program::init() -> int {
   return 1;
 }
 
-void Program::run() {
+void Application::run() {
   // Set the clear color to a nice green
   glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
 
