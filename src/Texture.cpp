@@ -1,17 +1,42 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Texture.hpp"
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
+#include <assert.h>
 #include <iostream>
 
+#include "Texture.hpp"
+
 Texture::Texture(const std::string& filePath) {
-  m_handle = loadTextureFromFile(filePath);
+  assert(loadTextureFromFile(filePath) != 0);
+  this->init();
 }
 
 Texture::~Texture() { glDeleteTextures(1, &m_handle); }
 
+void Texture::bind() const { glBindTexture(GL_TEXTURE_2D, m_handle); }
+
+void Texture::unbind() { glBindTexture(GL_TEXTURE_2D, 0); }
+
+unsigned int Texture::init() {
+  // init assumes the texture could be generated
+  glGenTextures(1, &m_handle);
+  this->bind();
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, params.width, params.height, 0, GL_RGB,
+               GL_UNSIGNED_BYTE, params.data);
+
+  glGenerateMipmap(GL_TEXTURE_2D);
+}
+
 unsigned int Texture::loadTextureFromFile(const std::string& filePath) {
-  // TODO: actually load something, returning junk so this thing compiles
-  return 1;
+  params.data =
+      stbi_load(filePath.c_str(), &params.width, &params.height, &params.numChannels, 0);
+  return (params.data == nullptr ? 0 : 1);
 }

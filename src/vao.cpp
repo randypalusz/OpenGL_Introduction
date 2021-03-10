@@ -21,6 +21,19 @@ void VertexArrayObject::destroy() {
   m_handle = 0;
 }
 
+/// \brief Adds an attribute pointer to the VAO based on the reference vbo
+///
+/// \param vbo The input VBO containing the data (positions, normals, tex coords, etc...)
+/// \param index The desired index in the VAO to bind this data to
+/// \param numComponents
+/// Number of components per unique element --
+/// Regardless of how many unique elements there are (may be x number of unique positions,
+/// for example), this refers to the number of components in one of those positions
+/// Ex. 15 unique positions in 2D space (x, y), this would be set to 2
+/// \param type Refers to the GL datatype of each component
+/// \param stride The distance between consecutive elements (in Bytes)
+/// \param offset The position in the data array of the first occurrence of this attribute
+/// (in Bytes)
 void VertexArrayObject::setAttributes(const VertexBufferObject& vbo, unsigned int index,
                                       unsigned int numComponents, GLenum type,
                                       unsigned int stride, size_t offset) {

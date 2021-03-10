@@ -9,6 +9,7 @@
 
 #include "Application.hpp"
 #include "Shader.hpp"
+#include "Texture.hpp"
 #include "vao.hpp"
 #include "vbo.hpp"
 
@@ -58,17 +59,19 @@ void Application::run() {
   glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
 
   float positions[] = {
-      -0.5f, -0.5f,  // vertex 1
-      0.5f,  -0.5f,  // vertex 2
-      0.5f,  0.5f,   // vertex 3
-      -0.5f, 0.5f    // vertex 4
+      // positions  // tex coords
+      -0.5f, -0.5f, 0.0f, 0.0f,  // vertex 1
+      0.5f,  -0.5f, 1.0f, 0.0f,  // vertex 2
+      0.5f,  0.5f,  1.0f, 1.0f,  // vertex 3
+      -0.5f, 0.5f,  0.0f, 1.0f   // vertex 4
   };
 
   float positions2[] = {
-      -1.0f, -1.0f,   // vertex 1
-      0.0f,  -1.0f,   // vertex 2
-      0.0f,  -0.25f,  // vertex 3
-      -1.0f, 0.0f     // vertex 4
+      // positions  // tex coords
+      -1.0f, -1.0f, 0.0f, 0.0f,  // vertex 1
+      0.0f,  -1.0f, 1.0f, 0.0f,  // vertex 2
+      -0.5f, -0.5f, 1.0f, 1.0f,  // vertex 3
+      -1.0f, 0.0f,  0.0f, 1.0f   // vertex 4
   };
 
   unsigned int indices[] = {0, 1, 2,   // triangle 1
@@ -84,25 +87,31 @@ void Application::run() {
   VertexArrayObject vao;
   VertexBufferObject vbo{VertexBufferType::VertexBuffer};
   // (bind vertex buffer, choose index 0, 2 elements for this attribute(x,y), float,
-  //  distance from this attribute to the next one is the length of two floats in bytes,
+  //  distance from this attribute to the next one is the length of 4 floats in bytes,
   //  the first position starts at index 0 in the vertex array)
-  vao.setAttributes(vbo, 0, 2, GL_FLOAT, sizeof(float) * 2, 0);
-  // (bind vertex buffer, choose index 1, 1 element for this attribute (just index), uint,
+  vao.setAttributes(vbo, 0, 2, GL_FLOAT, sizeof(float) * 4, 0);
+  // (bind vertex buffer, choose index 1, 2 elements for this attribute(x,y), float,
+  //  distance from this attribute to the next one is the length of 4 floats in bytes,
+  //  the first position starts at index 2 in the index array)
+  vao.setAttributes(vbo, 1, 2, GL_FLOAT, sizeof(float) * 4, 2 * sizeof(float));
+  // (bind index buffer, choose index 2, 1 element for this attribute (just index), uint,
   //  distance from this attribute to the next one is the length of one uint in bytes,
   //  the first position starts at index 0 in the index array)
-  vao.setAttributes(ibo, 1, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
-  // (starts at index 0, length = 8 floats, data is in the positions array)
-  vbo.setAttributes(0, sizeof(float) * 8, positions);
+  vao.setAttributes(ibo, 2, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
+  // (starts at index 0, length = 16 floats, data is in the positions array)
+  vbo.setAttributes(0, sizeof(float) * 16, positions);
 
   // using this to demonstrate a second rectangle
   VertexArrayObject vao2;
   VertexBufferObject vbo2{VertexBufferType::VertexBuffer};
-  vao2.setAttributes(ibo, 1, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
-  vao2.setAttributes(vbo2, 0, 2, GL_FLOAT, sizeof(float) * 2, 0);
-  vbo2.setAttributes(0, sizeof(float) * 8, positions2);
+  vao2.setAttributes(vbo2, 0, 2, GL_FLOAT, sizeof(float) * 4, 0);
+  vao2.setAttributes(vbo2, 1, 2, GL_FLOAT, sizeof(float) * 4, sizeof(float) * 2);
+  vao2.setAttributes(ibo, 2, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
+  vbo2.setAttributes(0, sizeof(float) * 16, positions2);
   // rect2 end
 
   Shader shader("res/VertexShader.glsl", "res/FragmentShader.glsl");
+  Texture texture("res/wall.jpg");
 
   // clear bindings
   glBindVertexArray(0);
@@ -139,6 +148,12 @@ void Application::run() {
     // set color uniform for active shader
     shader.setUniform4f("u_Color", glm::vec4(r, g, b, a));
 
+    // set gradient uniform for active shader
+    shader.setUniform1f("u_enableBlueGradient", 1.0f);
+
+    // bind texture
+    texture.bind();
+
     // bind vao
     vao.bind();
 
@@ -148,9 +163,10 @@ void Application::run() {
     // draw
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-    shader.setUniform4f("u_Color", glm::vec4(1.0f, g, b, a));
+    shader.setUniform4f("u_Color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    shader.setUniform1f("u_enableBlueGradient", 0.0f);
     vao2.bind();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     glfwSwapBuffers(m_window);

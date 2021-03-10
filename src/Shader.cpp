@@ -65,8 +65,14 @@ auto Shader::LoadShaderFromPath(const std::string& path) -> std::string {
   return content;
 }
 
-void Shader::setUniform4f(const std::string& uniformName, glm::vec4 vals) const {
+void Shader::setUniform4f(const std::string& uniformName, const glm::vec4& vals) const {
   int location = glGetUniformLocation(m_handle, uniformName.c_str());
   assert(location != -1);
   glUniform4f(location, vals.x, vals.y, vals.z, vals.w);
+}
+
+void Shader::setUniform1f(const std::string& uniformName, float val) const {
+  int location = glGetUniformLocation(m_handle, uniformName.c_str());
+  assert(location != -1);
+  glUniform1f(location, val);
 }
