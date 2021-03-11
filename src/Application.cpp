@@ -45,10 +45,11 @@ auto Application::init() -> int {
     return 0;
   }
 #ifdef _WIN32
+#ifndef NDEBUG
   // enable debug output after glad is loaded
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(MessageCallback, 0);
-  // end enable debug output
+#endif
 #endif
 
   std::cout << glGetString(GL_VERSION) << std::endl;
