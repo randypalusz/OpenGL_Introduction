@@ -34,6 +34,9 @@ auto Application::init() -> int {
 
   glfwMakeContextCurrent(window);
 
+  // set window resize callback
+  glfwSetWindowSizeCallback(window, onWindowResize);
+
   int gladInitRes = gladLoadGL();
   if (!gladInitRes) {
     fprintf(stderr, "Unable to initialize glad\n");
@@ -114,10 +117,10 @@ void Application::run() {
   Texture texture("res/wall.jpg");
 
   // clear bindings
-  glBindVertexArray(0);
-  glUseProgram(0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  // glBindVertexArray(0);
+  // glUseProgram(0);
+  // glBindBuffer(GL_ARRAY_BUFFER, 0);
+  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   auto t0 = std::chrono::high_resolution_clock::now();
   auto t1 = std::chrono::high_resolution_clock::now();

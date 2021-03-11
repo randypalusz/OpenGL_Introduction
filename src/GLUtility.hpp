@@ -10,6 +10,8 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
                                 GLsizei length, const GLchar* message,
                                 const void* userParam);
 
+void onWindowResize(GLFWwindow* window, int width, int height);
+
 auto shaderTypeToString(GLenum shaderType) -> std::string;
 
 #endif

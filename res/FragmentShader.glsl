@@ -17,5 +17,7 @@ void main()
   else {
     color = texture(texture1, texCoords);
   }
+  // color = u_Color;
+  // color = texture(texture1, texCoords);
 
 }

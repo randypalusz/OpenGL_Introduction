@@ -67,6 +67,10 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
           errorTypeString.c_str(), sevString.c_str(), message);
 }
 
+void onWindowResize(GLFWwindow* window, int width, int height) {
+  glViewport(0, 0, width, height);
+}
+
 auto shaderTypeToString(GLenum shaderType) -> std::string {
   std::string strType;
   switch (shaderType) {

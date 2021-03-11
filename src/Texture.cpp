@@ -10,11 +10,13 @@
 #include "Texture.hpp"
 
 Texture::Texture(const std::string& filePath) {
-  assert(loadTextureFromFile(filePath) != 0);
+  unsigned int success = loadTextureFromFile(filePath);
+  assert(success != 0);
   this->init();
 }
 
-Texture::~Texture() { glDeleteTextures(1, &m_handle); }
+Texture::~Texture() {  // glDeleteTextures(1, &m_handle);
+}
 
 void Texture::bind() const { glBindTexture(GL_TEXTURE_2D, m_handle); }
 
@@ -38,5 +40,8 @@ unsigned int Texture::init() {
 unsigned int Texture::loadTextureFromFile(const std::string& filePath) {
   params.data =
       stbi_load(filePath.c_str(), &params.width, &params.height, &params.numChannels, 0);
+#ifndef NDEBUG
+  std::cout << "Loaded Texture data from file: " << filePath << std::endl;
+#endif
   return (params.data == nullptr ? 0 : 1);
 }
