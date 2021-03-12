@@ -35,7 +35,9 @@ class CommonSquareAttributes {
         0, 1, 2,  // triangle 1
         2, 3, 0   // triangle 2
     };
+    // (starts at index 0, length = 6 unsigned ints, data is in the indices array)
     ibo.setAttributes(0, sizeof(unsigned int) * 6, indices);
+    // (starts at index 0, length = 16 floats, data is in the positions array)
     vbo.setAttributes(0, sizeof(float) * 16, positions);
   };
 };
@@ -45,8 +47,20 @@ class Square {
   Square(Shader* shader, Texture* texture) {
     m_texture = texture;
     m_shader = shader;
+    // (bind vertex buffer, choose index 0, 2 elements for this attribute(x,y), float,
+    //  distance from this attribute to the next one is the length of 4 floats in bytes,
+    //  the first position starts at index 0 in the vertex array)
     m_vao.setAttributes(m_vbo, 0, 2, GL_FLOAT, sizeof(float) * 4, 0);
+
+    // (bind vertex buffer, choose index 1, 2 elements for this attribute(x,y), float,
+    //  distance from this attribute to the next one is the length of 4 floats in bytes,
+    //  the first position starts at index 2 in the index array)
     m_vao.setAttributes(m_vbo, 1, 2, GL_FLOAT, sizeof(float) * 4, 2 * sizeof(float));
+
+    // (bind index buffer, choose index 2, 1 element for this attribute (just index),
+    // uint,
+    //  distance from this attribute to the next one is the length of one uint in bytes,
+    //  the first position starts at index 0 in the index array)
     m_vao.setAttributes(m_ibo, 2, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
   }
   void draw() {
@@ -54,10 +68,10 @@ class Square {
     m_shader->use();
 
     // set color uniform for active shader
-    m_shader->setUniform4f("u_Color", glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
+    m_shader->setUniform4f("u_Color", m_color);
 
     // set gradient uniform for active shader
-    m_shader->setUniform1f("u_enableBlueGradient", 1.0f);
+    m_shader->setUniform1f("u_enableBlueGradient", m_enableBlueGradient);
 
     // bind texture
     m_texture->bind();
@@ -71,6 +85,8 @@ class Square {
     // draw
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
   }
+
+  void setColor(const glm::vec4& color) { m_color = color; }
   ~Square() = default;
 
  private:
@@ -80,5 +96,7 @@ class Square {
   VertexBufferObject& m_ibo = attributes.ibo;
   Texture* m_texture;
   Shader* m_shader;
+  glm::vec4 m_color{1.0f, 1.0f, 1.0f, 1.0f};
+  float m_enableBlueGradient = 0.0f;
 };
 #endif

@@ -87,25 +87,6 @@ void Application::run() {
   // (starts at index 0, length = 6 unsigned ints, data is in the indices array)
   ibo.setAttributes(0, sizeof(unsigned int) * 6, indices);
 
-  // vertex array object contains pointers to where different attributes in the VBO reside
-  // VAO also contains a pointer to the index buffer that determines index draw order
-  VertexArrayObject vao;
-  VertexBufferObject vbo{VertexBufferType::VertexBuffer};
-  // (bind vertex buffer, choose index 0, 2 elements for this attribute(x,y), float,
-  //  distance from this attribute to the next one is the length of 4 floats in bytes,
-  //  the first position starts at index 0 in the vertex array)
-  vao.setAttributes(vbo, 0, 2, GL_FLOAT, sizeof(float) * 4, 0);
-  // (bind vertex buffer, choose index 1, 2 elements for this attribute(x,y), float,
-  //  distance from this attribute to the next one is the length of 4 floats in bytes,
-  //  the first position starts at index 2 in the index array)
-  vao.setAttributes(vbo, 1, 2, GL_FLOAT, sizeof(float) * 4, 2 * sizeof(float));
-  // (bind index buffer, choose index 2, 1 element for this attribute (just index), uint,
-  //  distance from this attribute to the next one is the length of one uint in bytes,
-  //  the first position starts at index 0 in the index array)
-  vao.setAttributes(ibo, 2, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
-  // (starts at index 0, length = 16 floats, data is in the positions array)
-  vbo.setAttributes(0, sizeof(float) * 16, positions);
-
   // using this to demonstrate a second rectangle
   VertexArrayObject vao2;
   VertexBufferObject vbo2{VertexBufferType::VertexBuffer};
@@ -119,7 +100,7 @@ void Application::run() {
   Texture texture("res/wall.jpg");
 
   // Testing the square class
-  Square sq{&shader, &texture};
+  Square square{&shader, &texture};
 
   // clear bindings
   // glBindVertexArray(0);
@@ -150,28 +131,8 @@ void Application::run() {
       r += inc;
     }
 
-    // // enable correct shaders
-    // shader.use();
-
-    // // set color uniform for active shader
-    // shader.setUniform4f("u_Color", glm::vec4(r, g, b, a));
-
-    // // set gradient uniform for active shader
-    // shader.setUniform1f("u_enableBlueGradient", 1.0f);
-
-    // // bind texture
-    // texture.bind();
-
-    // // bind vao
-    // vao.bind();
-
-    // // set polygon draw mode
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    // // draw
-    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-    sq.draw();
+    square.setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    square.draw();
 
     shader.setUniform4f("u_Color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     shader.setUniform1f("u_enableBlueGradient", 0.0f);
