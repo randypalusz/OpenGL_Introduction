@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "vao.hpp"
 #include "vbo.hpp"
 #include "Texture.hpp"
@@ -73,6 +74,9 @@ class Square {
     // set gradient uniform for active shader
     m_shader->setUniform1f("u_enableBlueGradient", m_enableBlueGradient);
 
+    // set transform matrix
+    m_shader->setUniformMatrix4fv("u_transformMatrix", m_transformMatrix);
+
     // bind texture
     m_texture->bind();
 
@@ -87,6 +91,11 @@ class Square {
   }
 
   void setColor(const glm::vec4& color) { m_color = color; }
+  void rotate(const float radians) {
+    m_transformMatrix = glm::rotate(m_transformMatrix, glm::radians(radians),
+                                    glm::vec3(0.0f, 0.0f, 1.0f));
+  }
+  void setEnableGradient(bool enable) { m_enableBlueGradient = enable ? 1.0f : 0.0f; }
   ~Square() = default;
 
  private:
@@ -97,6 +106,7 @@ class Square {
   Texture* m_texture;
   Shader* m_shader;
   glm::vec4 m_color{1.0f, 1.0f, 1.0f, 1.0f};
+  glm::mat4 m_transformMatrix = glm::mat4(1.0f);
   float m_enableBlueGradient = 0.0f;
 };
 #endif

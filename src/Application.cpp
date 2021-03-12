@@ -131,11 +131,14 @@ void Application::run() {
       r += inc;
     }
 
-    square.setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    square.setColor(glm::vec4(r, 1.0f, 0.0f, 1.0f));
+    square.setEnableGradient(true);
+    square.rotate(0.5f);
     square.draw();
 
     shader.setUniform4f("u_Color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     shader.setUniform1f("u_enableBlueGradient", 0.0f);
+    shader.setUniformMatrix4fv("u_transformMatrix", glm::mat4(1.0f));
     vao2.bind();
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

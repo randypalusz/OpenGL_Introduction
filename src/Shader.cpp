@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <string>
 #include <assert.h>
@@ -69,6 +70,13 @@ void Shader::setUniform4f(const std::string& uniformName, const glm::vec4& vals)
   int location = glGetUniformLocation(m_handle, uniformName.c_str());
   assert(location != -1);
   glUniform4f(location, vals.x, vals.y, vals.z, vals.w);
+}
+
+void Shader::setUniformMatrix4fv(const std::string& uniformName,
+                                 const glm::mat4& matrix) const {
+  int location = glGetUniformLocation(m_handle, uniformName.c_str());
+  assert(location != -1);
+  glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 void Shader::setUniform1f(const std::string& uniformName, float val) const {

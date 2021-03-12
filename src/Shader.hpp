@@ -9,6 +9,7 @@ class Shader {
   Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
   void use() const;
   void setUniform4f(const std::string& uniformName, const glm::vec4& vals) const;
+  void setUniformMatrix4fv(const std::string& uniformName, const glm::mat4& matrix) const;
   void setUniform1f(const std::string& uniformName, const float val) const;
 
  private:
