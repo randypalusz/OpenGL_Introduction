@@ -1,3 +1,5 @@
+#ifndef TEXTURE_HPP
+#define TEXTURE_HPP
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -26,3 +28,4 @@ class Texture {
   TextureParams params{};
   unsigned int m_handle = 0;
 };
+#endif

@@ -31,6 +31,7 @@ set(HEADERS
   ${SRC_DIR}/vao.hpp
   ${SRC_DIR}/vbo.hpp
   ${SRC_DIR}/Texture.hpp
+  ${SRC_DIR}/shapes/Square.hpp
 )
 
 # adding executable, changing executable suffix for windows

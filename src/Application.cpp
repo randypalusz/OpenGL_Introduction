@@ -12,6 +12,7 @@
 #include "Texture.hpp"
 #include "vao.hpp"
 #include "vbo.hpp"
+#include "shapes/Square.hpp"
 
 auto Application::init() -> int {
   int glfwInitRes = glfwInit();
@@ -117,6 +118,9 @@ void Application::run() {
   Shader shader("res/VertexShader.glsl", "res/FragmentShader.glsl");
   Texture texture("res/wall.jpg");
 
+  // Testing the square class
+  Square sq{&shader, &texture};
+
   // clear bindings
   // glBindVertexArray(0);
   // glUseProgram(0);
@@ -146,26 +150,28 @@ void Application::run() {
       r += inc;
     }
 
-    // enable correct shaders
-    shader.use();
+    // // enable correct shaders
+    // shader.use();
 
-    // set color uniform for active shader
-    shader.setUniform4f("u_Color", glm::vec4(r, g, b, a));
+    // // set color uniform for active shader
+    // shader.setUniform4f("u_Color", glm::vec4(r, g, b, a));
 
-    // set gradient uniform for active shader
-    shader.setUniform1f("u_enableBlueGradient", 1.0f);
+    // // set gradient uniform for active shader
+    // shader.setUniform1f("u_enableBlueGradient", 1.0f);
 
-    // bind texture
-    texture.bind();
+    // // bind texture
+    // texture.bind();
 
-    // bind vao
-    vao.bind();
+    // // bind vao
+    // vao.bind();
 
-    // set polygon draw mode
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    // // set polygon draw mode
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    // draw
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    // // draw
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+    sq.draw();
 
     shader.setUniform4f("u_Color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     shader.setUniform1f("u_enableBlueGradient", 0.0f);
