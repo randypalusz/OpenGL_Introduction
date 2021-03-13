@@ -95,14 +95,21 @@ class Square {
     m_transformMatrix = glm::rotate(m_transformMatrix, glm::radians(radians),
                                     glm::vec3(0.0f, 0.0f, 1.0f));
   }
+  void setScale(const float scale) {
+    m_transformMatrix = glm::scale(m_transformMatrix, glm::vec3(scale, scale, scale));
+  }
   void setEnableGradient(bool enable) { m_enableBlueGradient = enable ? 1.0f : 0.0f; }
   ~Square() = default;
 
  private:
   CommonSquareAttributes& attributes = CommonSquareAttributes::get();
-  VertexArrayObject m_vao;
+  // vertex buffer contains information about each vertex
   VertexBufferObject& m_vbo = attributes.vbo;
+  // index buffer defines the order that indices are drawn in position arrays
   VertexBufferObject& m_ibo = attributes.ibo;
+  // VAO contains pointers to attributes in the vertex buffer (position, tex coords) and
+  // the index buffer
+  VertexArrayObject m_vao;
   Texture* m_texture;
   Shader* m_shader;
   glm::vec4 m_color{1.0f, 1.0f, 1.0f, 1.0f};

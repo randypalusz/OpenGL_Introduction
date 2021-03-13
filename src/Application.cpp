@@ -63,44 +63,11 @@ void Application::run() {
   // Set the clear color to a nice green
   glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
 
-  float positions[] = {
-      // positions  // tex coords
-      -0.5f, -0.5f, 0.0f, 0.0f,  // vertex 1
-      0.5f,  -0.5f, 1.0f, 0.0f,  // vertex 2
-      0.5f,  0.5f,  1.0f, 1.0f,  // vertex 3
-      -0.5f, 0.5f,  0.0f, 1.0f   // vertex 4
-  };
-
-  float positions2[] = {
-      // positions  // tex coords
-      -1.0f, -1.0f, 0.0f, 0.0f,  // vertex 1
-      0.0f,  -1.0f, 1.0f, 0.0f,  // vertex 2
-      -0.5f, -0.5f, 1.0f, 1.0f,  // vertex 3
-      -1.0f, 0.0f,  0.0f, 1.0f   // vertex 4
-  };
-
-  unsigned int indices[] = {0, 1, 2,   // triangle 1
-                            2, 3, 0};  // triangle 2
-
-  // setting up index buffer to define the order that indices are drawn in position arrays
-  VertexBufferObject ibo{VertexBufferType::IndexBuffer};
-  // (starts at index 0, length = 6 unsigned ints, data is in the indices array)
-  ibo.setAttributes(0, sizeof(unsigned int) * 6, indices);
-
-  // using this to demonstrate a second rectangle
-  VertexArrayObject vao2;
-  VertexBufferObject vbo2{VertexBufferType::VertexBuffer};
-  vao2.setAttributes(vbo2, 0, 2, GL_FLOAT, sizeof(float) * 4, 0);
-  vao2.setAttributes(vbo2, 1, 2, GL_FLOAT, sizeof(float) * 4, sizeof(float) * 2);
-  vao2.setAttributes(ibo, 2, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
-  vbo2.setAttributes(0, sizeof(float) * 16, positions2);
-  // rect2 end
-
   Shader shader("res/VertexShader.glsl", "res/FragmentShader.glsl");
   Texture texture("res/wall.jpg");
 
-  // Testing the square class
   Square square{&shader, &texture};
+  Square square2{&shader, &texture};
 
   // clear bindings
   // glBindVertexArray(0);
@@ -115,11 +82,13 @@ void Application::run() {
   float b = 0.4f;
   float a = 1.0f;
   float inc = 0.05f;
+  square2.setScale(0.5f);
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT);
     t1 = std::chrono::high_resolution_clock::now();
 
-    if (std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() >= 50) {
+    // ~144 fps (frametime ~13.333 ms)
+    if (std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() >= 6944) {
       // reset the start point
       t0 = std::chrono::high_resolution_clock::now();
       // update a to scroll between 0 and 1.0f, back to 0
@@ -129,19 +98,19 @@ void Application::run() {
         inc = -0.05f;
       }
       r += inc;
+
+      // rotate square
+      square.rotate(0.5f);
+      square2.rotate(1.0f);
     }
 
     square.setColor(glm::vec4(r, 1.0f, 0.0f, 1.0f));
     square.setEnableGradient(true);
-    square.rotate(0.5f);
     square.draw();
 
-    shader.setUniform4f("u_Color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    shader.setUniform1f("u_enableBlueGradient", 0.0f);
-    shader.setUniformMatrix4fv("u_transformMatrix", glm::mat4(1.0f));
-    vao2.bind();
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    square2.setColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    square2.setEnableGradient(false);
+    square2.draw();
 
     glfwSwapBuffers(m_window);
     glfwPollEvents();
