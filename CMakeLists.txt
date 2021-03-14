@@ -32,6 +32,8 @@ set(HEADERS
   ${SRC_DIR}/vbo.hpp
   ${SRC_DIR}/Texture.hpp
   ${SRC_DIR}/shapes/Square.hpp
+  ${SRC_DIR}/input/Command.hpp
+  ${SRC_DIR}/input/InputHandler.hpp
 )
 
 # adding executable, changing executable suffix for windows
