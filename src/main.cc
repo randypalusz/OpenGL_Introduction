@@ -10,7 +10,7 @@ int main() {
 #ifdef _WIN32
   Application p{1280, 1280, 4, 6};
 #else
-  Application p{1280, 720, 4, 1};
+  Application p{800, 800, 4, 1};
 #endif
 
   if (!p.init()) {

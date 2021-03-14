@@ -23,7 +23,7 @@ class Texture {
   void setAttributes();
 
  private:
-  unsigned int init();
+  void init();
   unsigned int loadTextureFromFile(const std::string& filePath);
   TextureParams params{};
   unsigned int m_handle = 0;

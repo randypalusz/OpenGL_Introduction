@@ -22,7 +22,7 @@ void Texture::bind() const { glBindTexture(GL_TEXTURE_2D, m_handle); }
 
 void Texture::unbind() { glBindTexture(GL_TEXTURE_2D, 0); }
 
-unsigned int Texture::init() {
+void Texture::init() {
   // init assumes the texture could be generated
   glGenTextures(1, &m_handle);
   this->bind();
