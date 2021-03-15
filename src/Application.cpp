@@ -76,20 +76,21 @@ void Application::run() {
   };
   InputHandler inputHandler{m_window};
 
-  Shader shader("res/VertexShader.glsl", "res/FragmentShader.glsl");
+  // Shader shader("res/VertexShader.glsl", "res/FragmentShader.glsl");
+  std::vector<Shader> shaders{{"res/VertexShader.glsl", "res/FragmentShader.glsl"}};
   Texture texture("res/wall.jpg");
 
   std::vector<CubeStruct> cubes{
-      {glm::vec3(0.0f, 0.0f, -3.0f), {m_window, &shader, &texture}, 0.05f},
-      {glm::vec3(2.0f, 5.0f, -15.0f), {m_window, &shader, &texture}, 0.6f},
-      {glm::vec3(-1.5f, -2.2f, -2.5f), {m_window, &shader, &texture}, 0.8f},
-      {glm::vec3(-3.8f, -2.0f, -12.3f), {m_window, &shader, &texture}, 0.1f},
-      {glm::vec3(2.4f, -0.4f, -3.5f), {m_window, &shader, &texture}, 0.3f},
-      {glm::vec3(-1.7f, 3.0f, -7.5f), {m_window, &shader, &texture}, 0.2f},
-      {glm::vec3(1.3f, -2.0f, -2.5f), {m_window, &shader, &texture}, 0.16f},
-      {glm::vec3(1.5f, 2.0f, -2.5f), {m_window, &shader, &texture}, 0.32f},
-      {glm::vec3(1.5f, 0.2f, -1.5f), {m_window, &shader, &texture}, 0.23f},
-      {glm::vec3(-1.3f, 1.0f, -1.5f), {m_window, &shader, &texture}, 0.41f}};
+      {glm::vec3(0.0f, 0.0f, -3.0f), {m_window, &shaders.at(0), &texture}, 0.05f},
+      {glm::vec3(2.0f, 5.0f, -15.0f), {m_window, &shaders.at(0), &texture}, 0.6f},
+      {glm::vec3(-1.5f, -2.2f, -2.5f), {m_window, &shaders.at(0), &texture}, 0.8f},
+      {glm::vec3(-3.8f, -2.0f, -12.3f), {m_window, &shaders.at(0), &texture}, 0.1f},
+      {glm::vec3(2.4f, -0.4f, -3.5f), {m_window, &shaders.at(0), &texture}, 0.3f},
+      {glm::vec3(-1.7f, 3.0f, -7.5f), {m_window, &shaders.at(0), &texture}, 0.2f},
+      {glm::vec3(1.3f, -2.0f, -2.5f), {m_window, &shaders.at(0), &texture}, 0.16f},
+      {glm::vec3(1.5f, 2.0f, -2.5f), {m_window, &shaders.at(0), &texture}, 0.32f},
+      {glm::vec3(1.5f, 0.2f, -1.5f), {m_window, &shaders.at(0), &texture}, 0.23f},
+      {glm::vec3(-1.3f, 1.0f, -1.5f), {m_window, &shaders.at(0), &texture}, 0.41f}};
 
   for (CubeStruct& cubeStruct : cubes) {
     cubeStruct.cube.movePosition(cubeStruct.position);
@@ -104,12 +105,16 @@ void Application::run() {
   float b = 0.4f;
   float a = 1.0f;
   float inc = 0.05f;
+  bool start = true;
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     t1 = std::chrono::high_resolution_clock::now();
 
     // ~144 fps (frametime ~13.333 ms)
-    if (std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() >= 6944) {
+    if ((std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() >=
+         6944) ||
+        start) {
+      start = false;
       inputHandler.handleInput();
       // reset the start point
       t0 = std::chrono::high_resolution_clock::now();
@@ -123,6 +128,13 @@ void Application::run() {
       for (CubeStruct& cubeStruct : cubes) {
         cubeStruct.cube.setColor(glm::vec4(r, 1.0f, 0.0f, 1.0f));
         cubeStruct.cube.rotate(cubeStruct.rotation);
+      }
+      for (Shader& shader : shaders) {
+        glm::mat4 projection = glm::perspective(
+            glm::radians(90.0f), (float)m_width / (float)m_height, 0.1f, 100.0f);
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+        shader.setUniformMatrix4fv("u_projection", projection);
+        shader.setUniformMatrix4fv("u_view", view);
       }
     }
     for (CubeStruct& cubeStruct : cubes) {

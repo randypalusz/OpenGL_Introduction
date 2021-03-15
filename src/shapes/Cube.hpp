@@ -128,7 +128,7 @@ class Cube {
     m_shader->setUniformMatrix4fv("u_model", m_model);
 
     // set view matrix
-    m_shader->setUniformMatrix4fv("u_view", m_view);
+    // m_shader->setUniformMatrix4fv("u_view", m_view);
 
     // bind texture
     m_texture->bind();
@@ -147,11 +147,12 @@ class Cube {
 
   void initMatrices() {
     // TODO: move projection matrix into camera class
-    m_projection = glm::perspective(
-        glm::radians(90.0f), (float)m_windowWidth / (float)m_windowHeight, 0.1f, 100.0f);
-    m_view = glm::translate(m_view, glm::vec3(0.0f, 0.0f, 0.0f));
+    // m_projection = glm::perspective(
+    //     glm::radians(90.0f), (float)m_windowWidth / (float)m_windowHeight, 0.1f,
+    //     100.0f);
+    // m_view = glm::translate(m_view, glm::vec3(0.0f, 0.0f, 0.0f));
     m_shader->use();
-    m_shader->setUniformMatrix4fv("u_projection", m_projection);
+    // m_shader->setUniformMatrix4fv("u_projection", m_projection);
   }
 
   void setColor(const glm::vec4& color) { m_color = color; }
@@ -182,8 +183,8 @@ class Cube {
   int m_windowHeight;
   glm::vec4 m_color{1.0f, 1.0f, 1.0f, 1.0f};
   glm::mat4 m_model = glm::mat4(1.0f);
-  glm::mat4 m_projection = glm::mat4(1.0f);
-  glm::mat4 m_view = glm::mat4(1.0f);
+  // glm::mat4 m_projection = glm::mat4(1.0f);
+  // glm::mat4 m_view = glm::mat4(1.0f);
   float m_enableBlueGradient = 0.0f;
 };
 #endif
