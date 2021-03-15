@@ -16,6 +16,7 @@
 #include "shapes/Cube.hpp"
 #include "input/Command.hpp"
 #include "input/InputHandler.hpp"
+#include "Camera.hpp"
 
 auto Application::init() -> int {
   int glfwInitRes = glfwInit();
@@ -38,8 +39,23 @@ auto Application::init() -> int {
 
   glfwMakeContextCurrent(window);
 
+  m_window = window;
+  glfwSetWindowUserPointer(m_window, reinterpret_cast<void*>(this));
+
   // set window resize callback
-  glfwSetWindowSizeCallback(window, onWindowResize);
+  glfwSetWindowSizeCallback(m_window, onWindowResize);
+  // init mouse callbacks
+  glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos) {
+    auto appInstance = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
+    appInstance->mouseCallback(xpos, ypos);
+  });
+  glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xoffset, double yoffset) {
+    auto appInstance = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
+    appInstance->scrollCallback((float)yoffset);
+  });
+
+  // tell GLFW to capture our mouse
+  glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   int gladInitRes = gladLoadGL();
   if (!gladInitRes) {
@@ -64,7 +80,8 @@ auto Application::init() -> int {
   // Set the clear color to a nice green
   glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
 
-  m_window = window;
+  m_camera = new Camera{glm::vec3(0.0f, 0.0f, -3.0f)};
+
   return 1;
 }
 
@@ -112,7 +129,7 @@ void Application::run() {
 
     // ~144 fps (frametime ~13.333 ms)
     if ((std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() >=
-         6944) ||
+         5000) ||
         start) {
       start = false;
       inputHandler.handleInput();
@@ -120,9 +137,9 @@ void Application::run() {
       t0 = std::chrono::high_resolution_clock::now();
       // update a to scroll between 0 and 1.0f, back to 0
       if (r < 0.0f) {
-        inc = 0.05f;
+        inc = 0.02f;
       } else if (r > 1.0f) {
-        inc = -0.05f;
+        inc = -0.02f;
       }
       r += inc;
       for (CubeStruct& cubeStruct : cubes) {
@@ -130,12 +147,15 @@ void Application::run() {
         cubeStruct.cube.rotate(cubeStruct.rotation);
       }
       for (Shader& shader : shaders) {
-        glm::mat4 projection = glm::perspective(
-            glm::radians(90.0f), (float)m_width / (float)m_height, 0.1f, 100.0f);
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+        glm::mat4 projection =
+            glm::perspective(glm::radians(m_camera->getZoom()),
+                             (float)m_width / (float)m_height, 0.1f, 100.0f);
+
+        glm::mat4 view = m_camera->getViewMatrix();
         shader.setUniformMatrix4fv("u_projection", projection);
         shader.setUniformMatrix4fv("u_view", view);
       }
+      processKeyInput(m_window, *m_camera);
     }
     for (CubeStruct& cubeStruct : cubes) {
       cubeStruct.cube.draw();
@@ -147,4 +167,24 @@ void Application::run() {
 
   glfwDestroyWindow(m_window);
   glfwTerminate();
+}
+
+void Application::scrollCallback(double yoffset) {
+  m_camera->mouseScroll((float)yoffset);
+}
+
+void Application::mouseCallback(double xpos, double ypos) {
+  if (m_mouseParams->firstMouse) {
+    m_mouseParams->lastX = xpos;
+    m_mouseParams->lastY = ypos;
+    m_mouseParams->firstMouse = false;
+  }
+
+  float xoffset = xpos - m_mouseParams->lastX;
+  float yoffset = m_mouseParams->lastY - ypos;
+
+  m_mouseParams->lastX = xpos;
+  m_mouseParams->lastY = ypos;
+
+  m_camera->mouseMovement(xoffset, yoffset);
 }

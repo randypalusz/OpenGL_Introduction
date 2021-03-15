@@ -67,9 +67,38 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
           errorTypeString.c_str(), sevString.c_str(), message);
 }
 
+void processKeyInput(GLFWwindow* window, Camera& camera) {
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    camera.keyMovement(Movement::FORWARD);
+  }
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    camera.keyMovement(Movement::BACKWARD);
+  }
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    camera.keyMovement(Movement::LEFT);
+  }
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    camera.keyMovement(Movement::RIGHT);
+  }
+  if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+    camera.keyMovement(Movement::UP);
+  }
+  if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+    camera.keyMovement(Movement::DOWN);
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, true);
+  }
+}
+
 void onWindowResize(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
 }
+
+void processScroll(GLFWwindow* window, double xoffset, double yoffset) {}
+
+void processMouse(GLFWwindow* window, double xpos, double ypos) {}
 
 auto shaderTypeToString(GLenum shaderType) -> std::string {
   std::string strType;
