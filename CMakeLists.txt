@@ -31,7 +31,7 @@ set(HEADERS
   ${SRC_DIR}/vao.hpp
   ${SRC_DIR}/vbo.hpp
   ${SRC_DIR}/Texture.hpp
-  ${SRC_DIR}/shapes/Square.hpp
+  ${SRC_DIR}/shapes/Cube.hpp
   ${SRC_DIR}/input/Command.hpp
   ${SRC_DIR}/input/InputHandler.hpp
 )

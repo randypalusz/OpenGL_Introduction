@@ -1,5 +1,5 @@
-#ifndef SQUARE_HPP
-#define SQUARE_HPP
+#ifndef CUBE_HPP
+#define CUBE_HPP
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -10,14 +10,14 @@
 #include "Shader.hpp"
 
 // Singleton that will hold common square attributes (index buffer, vbo)
-class CommonSquareAttributes {
+class CubeAttributes {
  public:
-  static CommonSquareAttributes& get() {
-    static CommonSquareAttributes instance;
+  static CubeAttributes& get() {
+    static CubeAttributes instance;
     return instance;
   }
-  CommonSquareAttributes(CommonSquareAttributes const&) = delete;
-  void operator=(CommonSquareAttributes const&) = delete;
+  CubeAttributes(CubeAttributes const&) = delete;
+  void operator=(CubeAttributes const&) = delete;
   float* positions;
   unsigned int* indices;
   VertexArrayObject vao{};
@@ -25,7 +25,7 @@ class CommonSquareAttributes {
   VertexBufferObject vbo{VertexBufferType::VertexBuffer};
 
  private:
-  CommonSquareAttributes() {
+  CubeAttributes() {
     // positions = new float[20]{
     //     // positions  // tex coords
     //     -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // vertex 1
@@ -105,9 +105,9 @@ class CommonSquareAttributes {
   };
 };
 
-class Square {
+class Cube {
  public:
-  Square(GLFWwindow* window, Shader* shader, Texture* texture) {
+  Cube(GLFWwindow* window, Shader* shader, Texture* texture) {
     glfwGetWindowSize(window, &m_windowWidth, &m_windowHeight);
     m_texture = texture;
     m_shader = shader;
@@ -140,14 +140,16 @@ class Square {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     // draw
+    // glDrawElements if index buffer
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     glDrawArrays(GL_TRIANGLES, 0, 36);
   }
 
   void initMatrices() {
+    // TODO: move projection matrix into camera class
     m_projection = glm::perspective(
-        glm::radians(45.0f), (float)m_windowWidth / (float)m_windowHeight, 0.1f, 100.0f);
-    m_view = glm::translate(m_view, glm::vec3(0.0f, 0.0f, -3.0f));
+        glm::radians(90.0f), (float)m_windowWidth / (float)m_windowHeight, 0.1f, 100.0f);
+    m_view = glm::translate(m_view, glm::vec3(0.0f, 0.0f, 0.0f));
     m_shader->use();
     m_shader->setUniformMatrix4fv("u_projection", m_projection);
   }
@@ -163,10 +165,10 @@ class Square {
 
   void setEnableGradient(bool enable) { m_enableBlueGradient = enable ? 1.0f : 0.0f; }
 
-  ~Square() = default;
+  ~Cube() = default;
 
  private:
-  CommonSquareAttributes& attributes = CommonSquareAttributes::get();
+  CubeAttributes& attributes = CubeAttributes::get();
   // vertex buffer contains information about each vertex
   VertexBufferObject& m_vbo = attributes.vbo;
   // index buffer defines the order that indices are drawn in position arrays

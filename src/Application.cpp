@@ -13,7 +13,7 @@
 #include "Texture.hpp"
 #include "vao.hpp"
 #include "vbo.hpp"
-#include "shapes/Square.hpp"
+#include "shapes/Cube.hpp"
 #include "input/Command.hpp"
 #include "input/InputHandler.hpp"
 
@@ -69,37 +69,32 @@ auto Application::init() -> int {
 }
 
 void Application::run() {
+  struct CubeStruct {
+    glm::vec3 position;
+    Cube cube;
+    float rotation;
+  };
   InputHandler inputHandler{m_window};
 
   Shader shader("res/VertexShader.glsl", "res/FragmentShader.glsl");
   Texture texture("res/wall.jpg");
 
-  // Square square{m_window, &shader, &texture};
+  std::vector<CubeStruct> cubes{
+      {glm::vec3(0.0f, 0.0f, -3.0f), {m_window, &shader, &texture}, 0.05f},
+      {glm::vec3(2.0f, 5.0f, -15.0f), {m_window, &shader, &texture}, 0.6f},
+      {glm::vec3(-1.5f, -2.2f, -2.5f), {m_window, &shader, &texture}, 0.8f},
+      {glm::vec3(-3.8f, -2.0f, -12.3f), {m_window, &shader, &texture}, 0.1f},
+      {glm::vec3(2.4f, -0.4f, -3.5f), {m_window, &shader, &texture}, 0.3f},
+      {glm::vec3(-1.7f, 3.0f, -7.5f), {m_window, &shader, &texture}, 0.2f},
+      {glm::vec3(1.3f, -2.0f, -2.5f), {m_window, &shader, &texture}, 0.16f},
+      {glm::vec3(1.5f, 2.0f, -2.5f), {m_window, &shader, &texture}, 0.32f},
+      {glm::vec3(1.5f, 0.2f, -1.5f), {m_window, &shader, &texture}, 0.23f},
+      {glm::vec3(-1.3f, 1.0f, -1.5f), {m_window, &shader, &texture}, 0.41f}};
 
-  glm::vec3 cubePositions[] = {
-      glm::vec3(0.0f, 0.0f, -3.0f),   glm::vec3(2.0f, 5.0f, -15.0f),
-      glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
-      glm::vec3(2.4f, -0.4f, -3.5f),  glm::vec3(-1.7f, 3.0f, -7.5f),
-      glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
-      glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
-
-  std::vector<Square> squares{
-      {m_window, &shader, &texture},  //
-      {m_window, &shader, &texture},  //
-      {m_window, &shader, &texture},  //
-      {m_window, &shader, &texture},  //
-      {m_window, &shader, &texture},  //
-      {m_window, &shader, &texture},  //
-      {m_window, &shader, &texture},  //
-      {m_window, &shader, &texture},  //
-      {m_window, &shader, &texture},  //
-      {m_window, &shader, &texture}   //
-  };
-  int i = 0;
-  for (Square& s : squares) {
-    s.setScale(0.5f);
-    s.movePosition(cubePositions[i]);
-    i++;
+  for (CubeStruct& cubeStruct : cubes) {
+    cubeStruct.cube.movePosition(cubeStruct.position);
+    cubeStruct.cube.setEnableGradient(true);
+    cubeStruct.cube.setScale(0.8f);
   }
 
   auto t0 = std::chrono::high_resolution_clock::now();
@@ -125,15 +120,13 @@ void Application::run() {
         inc = -0.05f;
       }
       r += inc;
+      for (CubeStruct& cubeStruct : cubes) {
+        cubeStruct.cube.setColor(glm::vec4(r, 1.0f, 0.0f, 1.0f));
+        cubeStruct.cube.rotate(cubeStruct.rotation);
+      }
     }
-
-    // create transformations
-    shader.use();
-    for (Square& s : squares) {
-      s.setColor(glm::vec4(r, 1.0f, 0.0f, 1.0f));
-      s.setEnableGradient(true);
-      s.rotate(0.5f);
-      s.draw();
+    for (CubeStruct& cubeStruct : cubes) {
+      cubeStruct.cube.draw();
     }
 
     glfwSwapBuffers(m_window);

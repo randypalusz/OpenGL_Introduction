@@ -1,5 +1,5 @@
-#ifndef PROGRAM_HPP
-#define PROGRAM_HPP
+#ifndef APPLICATION_HPP
+#define APPLICATION_HPP
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
