@@ -66,21 +66,55 @@ auto Shader::LoadShaderFromPath(const std::string& path) -> std::string {
   return content;
 }
 
-void Shader::setUniform4f(const std::string& uniformName, const glm::vec4& vals) const {
+template <typename T>
+void Shader::setUniform(const std::string& uniformName, const T& val) const {
   int location = glGetUniformLocation(m_handle, uniformName.c_str());
+  GLenum type;
+  GLint size;
+  GLsizei length;
   assert(location != -1);
-  glUniform4f(location, vals.x, vals.y, vals.z, vals.w);
+  glGetActiveUniform(m_handle, (GLuint)location, (GLsizei)0, &length, &size, &type,
+                     nullptr);
+  switch (type) {
+    case GL_FLOAT:
+      glUniform1fv(location, 1, glm::value_ptr(val));
+      break;
+    case GL_FLOAT_VEC2:
+      glUniform2fv(location, 1, glm::value_ptr(val));
+      break;
+    case GL_FLOAT_VEC3:
+      glUniform3fv(location, 1, glm::value_ptr(val));
+      break;
+    case GL_FLOAT_VEC4:
+      glUniform4fv(location, 1, glm::value_ptr(val));
+      break;
+    case GL_FLOAT_MAT2:
+      glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(val));
+      break;
+    case GL_FLOAT_MAT3:
+      glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(val));
+      break;
+    case GL_FLOAT_MAT4:
+      glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(val));
+      break;
+    default:
+#ifndef NDEBUG
+      std::cout << "Uniform '" << uniformName
+                << "' not set. May need definition in Shader::setUniform()" << std::endl;
+#endif
+      break;
+  }
 }
 
-void Shader::setUniformMatrix4fv(const std::string& uniformName,
-                                 const glm::mat4& matrix) const {
-  int location = glGetUniformLocation(m_handle, uniformName.c_str());
-  assert(location != -1);
-  glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
-}
-
-void Shader::setUniform1f(const std::string& uniformName, float val) const {
+void Shader::setUniform(const std::string& uniformName, const float& val) const {
   int location = glGetUniformLocation(m_handle, uniformName.c_str());
   assert(location != -1);
   glUniform1f(location, val);
 }
+
+// forward declaring the potential defiintions of this template here...
+// template void Shader::setUniform<float>(const std::string&, const float&) const;
+template void Shader::setUniform<glm::vec2>(const std::string&, const glm::vec2&) const;
+template void Shader::setUniform<glm::vec3>(const std::string&, const glm::vec3&) const;
+template void Shader::setUniform<glm::vec4>(const std::string&, const glm::vec4&) const;
+template void Shader::setUniform<glm::mat4>(const std::string&, const glm::mat4&) const;

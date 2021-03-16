@@ -117,16 +117,22 @@ void Application::run() {
 
     logicTimer.tick(false);
 
+    // output frame time
     renderTimer.tick(glfwGetTime());
+#ifndef NDEBUG
+    std::cout << renderTimer.deltaTime << std::endl;
+#endif
 
     // update logic
     logicUpdate(logicTimer, cubes, colors, increment);
 
+    // process input
     processKeyInput(m_window, *m_camera, renderTimer.deltaTime);
 
     // update camera of each shader
     updateShaderCamera(shaders);
 
+    // draw cubes
     for (CubeStruct& cubeStruct : cubes) {
       cubeStruct.cube.draw();
     }
@@ -166,8 +172,8 @@ void Application::updateShaderCamera(std::vector<Shader>& shaders) {
                          (float)m_width / (float)m_height, 0.1f, 100.0f);
 
     glm::mat4 view = m_camera->getViewMatrix();
-    shader.setUniformMatrix4fv("u_projection", projection);
-    shader.setUniformMatrix4fv("u_view", view);
+    shader.setUniform("u_projection", projection);
+    shader.setUniform("u_view", view);
   }
 }
 

@@ -8,6 +8,11 @@ class Shader {
  public:
   Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
   void use() const;
+  /// \brief Templated setUniform function for glm types
+  template <typename T>
+  void setUniform(const std::string& uniformName, const T& val) const;
+  /// \brief setUniform override for a single float
+  void setUniform(const std::string& uniformName, const float& val) const;
   void setUniform4f(const std::string& uniformName, const glm::vec4& vals) const;
   void setUniformMatrix4fv(const std::string& uniformName, const glm::mat4& matrix) const;
   void setUniform1f(const std::string& uniformName, const float val) const;
