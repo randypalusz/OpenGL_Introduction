@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <string>
+#include <chrono>
 
 #include "GLUtility.hpp"
 
@@ -67,24 +68,24 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
           errorTypeString.c_str(), sevString.c_str(), message);
 }
 
-void processKeyInput(GLFWwindow* window, Camera& camera) {
+void processKeyInput(GLFWwindow* window, Camera& camera, float deltaTime) {
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-    camera.keyMovement(Movement::FORWARD);
+    camera.keyMovement(Movement::FORWARD, deltaTime);
   }
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-    camera.keyMovement(Movement::BACKWARD);
+    camera.keyMovement(Movement::BACKWARD, deltaTime);
   }
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-    camera.keyMovement(Movement::LEFT);
+    camera.keyMovement(Movement::LEFT, deltaTime);
   }
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-    camera.keyMovement(Movement::RIGHT);
+    camera.keyMovement(Movement::RIGHT, deltaTime);
   }
   if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-    camera.keyMovement(Movement::UP);
+    camera.keyMovement(Movement::UP, deltaTime);
   }
   if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-    camera.keyMovement(Movement::DOWN);
+    camera.keyMovement(Movement::DOWN, deltaTime);
   }
 
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {

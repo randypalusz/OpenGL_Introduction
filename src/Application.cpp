@@ -91,9 +91,7 @@ void Application::run() {
     Cube cube;
     float rotation;
   };
-  InputHandler inputHandler{m_window};
 
-  // Shader shader("res/VertexShader.glsl", "res/FragmentShader.glsl");
   std::vector<Shader> shaders{{"res/VertexShader.glsl", "res/FragmentShader.glsl"}};
   Texture texture("res/wall.jpg");
 
@@ -115,48 +113,48 @@ void Application::run() {
     cubeStruct.cube.setScale(0.8f);
   }
 
-  auto t0 = std::chrono::high_resolution_clock::now();
-  auto t1 = std::chrono::high_resolution_clock::now();
-  float r = 0.15f;
-  float g = 0.6f;
-  float b = 0.4f;
-  float a = 1.0f;
+  auto logicT0 = std::chrono::high_resolution_clock::now();
+  auto logicT1 = std::chrono::high_resolution_clock::now();
+  auto deltaLogic =
+      std::chrono::duration_cast<std::chrono::microseconds>(logicT1 - logicT0).count();
+  float deltaTime = 0.0f;
+  float lastFrame = 0.0f;
+  float thisFrame = 0.0f;
+  glm::vec4 colors{0.15f, 1.0f, 1.0f, 1.0f};
   float inc = 0.05f;
-  bool start = true;
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    t1 = std::chrono::high_resolution_clock::now();
 
-    // ~144 fps (frametime ~13.333 ms)
-    if ((std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() >=
-         5000) ||
-        start) {
-      start = false;
-      inputHandler.handleInput();
+    logicT1 = std::chrono::high_resolution_clock::now();
+    deltaLogic = (logicT1 - logicT0).count();
+
+    thisFrame = glfwGetTime();
+    deltaTime = thisFrame - lastFrame;
+    lastFrame = thisFrame;
+
+    // update logic
+    if (deltaLogic >= 500) {
       // reset the start point
-      t0 = std::chrono::high_resolution_clock::now();
+      logicT0 = std::chrono::high_resolution_clock::now();
       // update a to scroll between 0 and 1.0f, back to 0
-      if (r < 0.0f) {
+      if (colors.r < 0.0f) {
         inc = 0.02f;
-      } else if (r > 1.0f) {
+      } else if (colors.r > 1.0f) {
         inc = -0.02f;
       }
-      r += inc;
+      colors.r += inc;
       for (CubeStruct& cubeStruct : cubes) {
-        cubeStruct.cube.setColor(glm::vec4(r, 1.0f, 0.0f, 1.0f));
+        // cubeStruct.cube.setColor(glm::vec4(colors.r, 1.0f, 0.0f, 1.0f));
+        cubeStruct.cube.setColor(colors);
         cubeStruct.cube.rotate(cubeStruct.rotation);
       }
-      for (Shader& shader : shaders) {
-        glm::mat4 projection =
-            glm::perspective(glm::radians(m_camera->getZoom()),
-                             (float)m_width / (float)m_height, 0.1f, 100.0f);
-
-        glm::mat4 view = m_camera->getViewMatrix();
-        shader.setUniformMatrix4fv("u_projection", projection);
-        shader.setUniformMatrix4fv("u_view", view);
-      }
-      processKeyInput(m_window, *m_camera);
     }
+
+    processKeyInput(m_window, *m_camera, deltaTime);
+
+    // update camera of each shader
+    updateShaderCamera(shaders);
+
     for (CubeStruct& cubeStruct : cubes) {
       cubeStruct.cube.draw();
     }
@@ -187,4 +185,16 @@ void Application::mouseCallback(double xpos, double ypos) {
   m_mouseParams->lastY = ypos;
 
   m_camera->mouseMovement(xoffset, yoffset);
+}
+
+void Application::updateShaderCamera(std::vector<Shader>& shaders) {
+  for (Shader& shader : shaders) {
+    glm::mat4 projection =
+        glm::perspective(glm::radians(m_camera->getZoom()),
+                         (float)m_width / (float)m_height, 0.1f, 100.0f);
+
+    glm::mat4 view = m_camera->getViewMatrix();
+    shader.setUniformMatrix4fv("u_projection", projection);
+    shader.setUniformMatrix4fv("u_view", view);
+  }
 }

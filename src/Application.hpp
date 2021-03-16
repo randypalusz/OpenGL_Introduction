@@ -4,7 +4,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <vector>
+
 #include "GLUtility.hpp"
+#include "Shader.hpp"
 
 struct MouseParams {
   bool firstMouse;
@@ -29,6 +32,8 @@ class Application {
   auto init() -> int;
   auto getWindow() -> GLFWwindow* { return m_window; }
   void run();
+  void updateShaderCamera(std::vector<Shader>& shaders);
+  void logicUpdate();
 
  private:
   void scrollCallback(double yoffset);

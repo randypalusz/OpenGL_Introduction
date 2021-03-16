@@ -28,7 +28,7 @@ struct CameraAttributes {
         up{glm::vec3(0.0f, 1.0f, 0.0f)},
         yaw{-90.0f},
         pitch{0.0f},
-        speed{0.05f},
+        speed{5.0f},
         mouseSensitivity{0.1f},
         zoom{45.0f} {
     worldUp = up;
@@ -52,25 +52,26 @@ class Camera {
 
   float getZoom() { return m_attributes.zoom; }
 
-  void keyMovement(Movement direction) {
+  void keyMovement(Movement direction, float deltaTime) {
+    float velocity = m_attributes.speed * deltaTime;
     switch (direction) {
       case Movement::FORWARD:
-        m_attributes.position += m_attributes.front * m_attributes.speed;
+        m_attributes.position += m_attributes.front * velocity;
         break;
       case Movement::BACKWARD:
-        m_attributes.position -= m_attributes.front * m_attributes.speed;
+        m_attributes.position -= m_attributes.front * velocity;
         break;
       case Movement::RIGHT:
-        m_attributes.position += m_attributes.right * m_attributes.speed;
+        m_attributes.position += m_attributes.right * velocity;
         break;
       case Movement::LEFT:
-        m_attributes.position -= m_attributes.right * m_attributes.speed;
+        m_attributes.position -= m_attributes.right * velocity;
         break;
       case Movement::UP:
-        m_attributes.position += m_attributes.up * m_attributes.speed;
+        m_attributes.position += m_attributes.up * velocity;
         break;
       case Movement::DOWN:
-        m_attributes.position -= m_attributes.up * m_attributes.speed;
+        m_attributes.position -= m_attributes.up * velocity;
         break;
     }
   }
