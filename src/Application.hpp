@@ -3,11 +3,14 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include <vector>
 
 #include "GLUtility.hpp"
 #include "Shader.hpp"
+#include "Timer.hpp"
+#include "shapes/Cube.hpp"
 
 struct MouseParams {
   bool firstMouse;
@@ -17,6 +20,12 @@ struct MouseParams {
     lastX = (float)width / 2.0f;
     lastY = (float)height / 2.0f;
   }
+};
+
+struct CubeStruct {
+  glm::vec3 position;
+  Cube cube;
+  float rotation;
 };
 
 class Application {
@@ -33,7 +42,8 @@ class Application {
   auto getWindow() -> GLFWwindow* { return m_window; }
   void run();
   void updateShaderCamera(std::vector<Shader>& shaders);
-  void logicUpdate();
+  void logicUpdate(TimePointTimer& timer, std::vector<CubeStruct>& cubes,
+                   glm::vec4& colors, float& increment);
 
  private:
   void scrollCallback(double yoffset);

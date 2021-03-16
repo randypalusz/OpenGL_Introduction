@@ -35,6 +35,7 @@ set(HEADERS
   ${SRC_DIR}/input/Command.hpp
   ${SRC_DIR}/input/InputHandler.hpp
   ${SRC_DIR}/Camera.hpp
+  ${SRC_DIR}/Timer.hpp
 )
 
 # adding executable, changing executable suffix for windows

@@ -38,7 +38,7 @@ struct CameraAttributes {
 
 class Camera {
  public:
-  Camera(glm::vec3 startPosition) {
+  Camera(const glm::vec3& startPosition) {
     m_attributes.position = startPosition;
     updateVectors();
   }

@@ -17,6 +17,7 @@
 #include "input/Command.hpp"
 #include "input/InputHandler.hpp"
 #include "Camera.hpp"
+#include "Timer.hpp"
 
 auto Application::init() -> int {
   int glfwInitRes = glfwInit();
@@ -80,18 +81,12 @@ auto Application::init() -> int {
   // Set the clear color to a nice green
   glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
 
-  m_camera = new Camera{glm::vec3(0.0f, 0.0f, -3.0f)};
+  m_camera = new Camera{glm::vec3(0.0f, 0.0f, 3.0f)};
 
   return 1;
 }
 
 void Application::run() {
-  struct CubeStruct {
-    glm::vec3 position;
-    Cube cube;
-    float rotation;
-  };
-
   std::vector<Shader> shaders{{"res/VertexShader.glsl", "res/FragmentShader.glsl"}};
   Texture texture("res/wall.jpg");
 
@@ -113,44 +108,23 @@ void Application::run() {
     cubeStruct.cube.setScale(0.8f);
   }
 
-  auto logicT0 = std::chrono::high_resolution_clock::now();
-  auto logicT1 = std::chrono::high_resolution_clock::now();
-  auto deltaLogic =
-      std::chrono::duration_cast<std::chrono::microseconds>(logicT1 - logicT0).count();
-  float deltaTime = 0.0f;
-  float lastFrame = 0.0f;
-  float thisFrame = 0.0f;
   glm::vec4 colors{0.15f, 1.0f, 1.0f, 1.0f};
-  float inc = 0.05f;
+  Timer<float> renderTimer{0.0f};
+  TimePointTimer logicTimer{};
+  float increment = 0.02f;
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    logicT1 = std::chrono::high_resolution_clock::now();
-    deltaLogic = (logicT1 - logicT0).count();
+    // logicT1 = std::chrono::high_resolution_clock::now();
+    // deltaLogic = (logicT1 - logicT0).count();
+    logicTimer.tick(false);
 
-    thisFrame = glfwGetTime();
-    deltaTime = thisFrame - lastFrame;
-    lastFrame = thisFrame;
+    renderTimer.tick(glfwGetTime());
 
     // update logic
-    if (deltaLogic >= 500) {
-      // reset the start point
-      logicT0 = std::chrono::high_resolution_clock::now();
-      // update a to scroll between 0 and 1.0f, back to 0
-      if (colors.r < 0.0f) {
-        inc = 0.02f;
-      } else if (colors.r > 1.0f) {
-        inc = -0.02f;
-      }
-      colors.r += inc;
-      for (CubeStruct& cubeStruct : cubes) {
-        // cubeStruct.cube.setColor(glm::vec4(colors.r, 1.0f, 0.0f, 1.0f));
-        cubeStruct.cube.setColor(colors);
-        cubeStruct.cube.rotate(cubeStruct.rotation);
-      }
-    }
+    logicUpdate(logicTimer, cubes, colors, increment);
 
-    processKeyInput(m_window, *m_camera, deltaTime);
+    processKeyInput(m_window, *m_camera, renderTimer.deltaTime);
 
     // update camera of each shader
     updateShaderCamera(shaders);
@@ -196,5 +170,25 @@ void Application::updateShaderCamera(std::vector<Shader>& shaders) {
     glm::mat4 view = m_camera->getViewMatrix();
     shader.setUniformMatrix4fv("u_projection", projection);
     shader.setUniformMatrix4fv("u_view", view);
+  }
+}
+
+void Application::logicUpdate(TimePointTimer& logicTimer, std::vector<CubeStruct>& cubes,
+                              glm::vec4& colors, float& increment) {
+  if (logicTimer.deltaTime >= 5000) {
+    logicTimer.tick();
+
+    // update a to scroll between 0 and 1.0f, back to 0
+    if (colors.r < 0.0f) {
+      increment = abs(increment);
+    } else if (colors.r > 1.0f) {
+      increment = -abs(increment);
+    }
+    colors.r += increment;
+
+    for (CubeStruct& cubeStruct : cubes) {
+      cubeStruct.cube.setColor(colors);
+      cubeStruct.cube.rotate(cubeStruct.rotation);
+    }
   }
 }
