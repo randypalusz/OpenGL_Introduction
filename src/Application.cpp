@@ -115,8 +115,6 @@ void Application::run() {
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // logicT1 = std::chrono::high_resolution_clock::now();
-    // deltaLogic = (logicT1 - logicT0).count();
     logicTimer.tick(false);
 
     renderTimer.tick(glfwGetTime());
