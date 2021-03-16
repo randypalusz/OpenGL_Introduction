@@ -3,6 +3,11 @@
 #include <glm/glm.hpp>
 
 #include <string>
+#include <unordered_map>
+struct UniformParams {
+  GLenum type;
+  int location;
+};
 
 class Shader {
  public:
@@ -10,17 +15,18 @@ class Shader {
   void use() const;
   /// \brief Templated setUniform function for glm types
   template <typename T>
-  void setUniform(const std::string& uniformName, const T& val) const;
+  void setUniform(const std::string& uniformName, const T& val);
   /// \brief setUniform override for a single float
-  void setUniform(const std::string& uniformName, const float& val) const;
-  void setUniform4f(const std::string& uniformName, const glm::vec4& vals) const;
-  void setUniformMatrix4fv(const std::string& uniformName, const glm::mat4& matrix) const;
-  void setUniform1f(const std::string& uniformName, const float val) const;
+  void setUniform(const std::string& uniformName, const float& val);
 
  private:
   unsigned int CompileShader(unsigned int type, const std::string& src);
+  /// \brief returns type and location of uniform, handles map insert/get
+  UniformParams& getUniformParams(const std::string& uniformName);
   std::string LoadShaderFromPath(const std::string& path);
   unsigned int m_handle;
+  // index/type
+  std::unordered_map<std::string, UniformParams> m_uniformMap;
 };
 
 #endif

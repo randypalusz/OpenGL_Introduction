@@ -29,7 +29,7 @@ struct CameraAttributes {
         yaw{-90.0f},
         pitch{0.0f},
         speed{5.0f},
-        mouseSensitivity{0.1f},
+        mouseSensitivity{0.05f},
         zoom{45.0f} {
     worldUp = up;
     right = glm::normalize(glm::cross(front, worldUp));
