@@ -18,6 +18,7 @@
 #include "input/InputHandler.hpp"
 #include "Camera.hpp"
 #include "Timer.hpp"
+#include "shapes/Crosshair.hpp"
 
 auto Application::init() -> int {
   int glfwInitRes = glfwInit();
@@ -78,6 +79,12 @@ auto Application::init() -> int {
   // perform depth test for 3D
   glEnable(GL_DEPTH_TEST);
 
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  // messing with different blend functions
+  // glBlendFunc(GL_DST_ALPHA, GL_ONE);
+
   // Set the clear color to a nice green
   glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
 
@@ -87,8 +94,14 @@ auto Application::init() -> int {
 }
 
 void Application::run() {
+  // intended for non-UI things (objects that will need to be transformed for the camera)
   std::vector<Shader> shaders{{"res/VertexShader.glsl", "res/FragmentShader.glsl"}};
+  // separated as it will not move once drawn
+  Shader crosshairShader{"res/crosshair.vs", "res/crosshair.fs"};
   Texture texture("res/wall.jpg");
+  Texture crosshairTexture{"res/crosshair.png"};
+
+  Crosshair crosshair{m_window, &crosshairShader, &crosshairTexture};
 
   std::vector<CubeStruct> cubes{
       {glm::vec3(0.0f, 0.0f, -3.0f), {m_window, &shaders.at(0), &texture}, 0.05f},
@@ -100,7 +113,7 @@ void Application::run() {
       {glm::vec3(1.3f, -2.0f, -2.5f), {m_window, &shaders.at(0), &texture}, 0.16f},
       {glm::vec3(1.5f, 2.0f, -2.5f), {m_window, &shaders.at(0), &texture}, 0.32f},
       {glm::vec3(1.5f, 0.2f, -1.5f), {m_window, &shaders.at(0), &texture}, 0.23f},
-      {glm::vec3(-1.3f, 1.0f, -1.5f), {m_window, &shaders.at(0), &texture}, 0.41f}};
+      {glm::vec3(-1.3f, 1.0f, -1.5f), {m_window, &shaders.at(0), &texture}, 0.02f}};
 
   for (CubeStruct& cubeStruct : cubes) {
     cubeStruct.cube.movePosition(cubeStruct.position);
@@ -136,6 +149,9 @@ void Application::run() {
     for (CubeStruct& cubeStruct : cubes) {
       cubeStruct.cube.draw();
     }
+
+    // draw crosshair
+    crosshair.draw();
 
     glfwSwapBuffers(m_window);
     glfwPollEvents();

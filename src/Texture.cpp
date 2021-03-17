@@ -31,8 +31,13 @@ void Texture::init() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, params.width, params.height, 0, GL_RGB,
-               GL_UNSIGNED_BYTE, params.data);
+  if (params.numChannels == 3) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, params.width, params.height, 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, params.data);
+  } else if (params.numChannels == 4) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, params.width, params.height, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, params.data);
+  }
 
   glGenerateMipmap(GL_TEXTURE_2D);
 }

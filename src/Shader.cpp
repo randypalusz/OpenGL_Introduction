@@ -68,6 +68,7 @@ auto Shader::LoadShaderFromPath(const std::string& path) -> std::string {
 
 template <typename T>
 void Shader::setUniform(const std::string& uniformName, const T& val) {
+  this->use();
   UniformParams p = getUniformParams(uniformName);
   assert(p.location != -1);
   switch (p.type) {
@@ -102,6 +103,7 @@ void Shader::setUniform(const std::string& uniformName, const T& val) {
 }
 
 void Shader::setUniform(const std::string& uniformName, const float& val) {
+  this->use();
   UniformParams p = getUniformParams(uniformName);
   assert(p.location != -1);
   glUniform1f(p.location, val);
