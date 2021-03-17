@@ -139,7 +139,17 @@ class Cube {
     m_model = glm::rotate(m_model, glm::radians(radians), glm::vec3(0.5f, 1.0f, 0.0f));
   }
   void setScale(const float scale) {
-    m_model = glm::scale(m_model, glm::vec3(scale, scale, scale));
+    m_model = glm::scale(m_model, glm::vec3(1 / m_scale, 1 / m_scale, 1 / m_scale));
+    m_scale = scale;
+    m_scale = std::clamp(m_scale, 0.2f, 10.0f);
+    m_model = glm::scale(m_model, glm::vec3(m_scale, m_scale, m_scale));
+  }
+  void adjustScale(const float scaleAdjustment) {
+    m_model = glm::scale(m_model, glm::vec3(1 / m_scale, 1 / m_scale, 1 / m_scale));
+    float scaleFactor = (1 + scaleAdjustment);
+    m_scale = m_scale * scaleFactor;
+    m_scale = std::clamp(m_scale, 0.2f, 10.0f);
+    m_model = glm::scale(m_model, glm::vec3(m_scale, m_scale, m_scale));
   }
   void movePosition(glm::vec3 position) { m_model = glm::translate(m_model, position); }
 
@@ -160,6 +170,7 @@ class Cube {
   Shader* m_shader;
   int m_windowWidth;
   int m_windowHeight;
+  float m_scale = 1.0f;
   glm::vec4 m_color{1.0f, 1.0f, 1.0f, 1.0f};
   glm::mat4 m_model = glm::mat4(1.0f);
   float m_enableBlueGradient = 0.0f;

@@ -148,6 +148,8 @@ void Application::run() {
     cubeStruct.cube.setScale(0.8f);
   }
 
+  handler.bindScaleCommands(cubes);
+
   glm::vec4 colors{0.15f, 1.0f, 1.0f, 1.0f};
   Timer<float> renderTimer{0.0f};
   TimePointTimer logicTimer{};

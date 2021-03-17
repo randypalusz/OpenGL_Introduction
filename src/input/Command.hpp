@@ -5,6 +5,9 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include "Camera.hpp"
+#include "shapes/Cube.hpp"
+
+#include <vector>
 
 class Command {
  public:
@@ -61,4 +64,21 @@ class CloseWindowCommand : Command {
   GLFWwindow* m_window;
 };
 
+class ScaleCubesCommand : Command {
+ public:
+  ScaleCubesCommand(float scaleFactor, std::vector<CubeStruct>& cubes) : m_cubes(cubes) {
+    m_scaleFactor = scaleFactor;
+  };
+
+  virtual void execute(float deltaTime){};
+  virtual void execute() {
+    for (CubeStruct& cube : m_cubes) {
+      cube.cube.adjustScale(m_scaleFactor);
+    }
+  }
+
+ private:
+  std::vector<CubeStruct>& m_cubes;
+  float m_scaleFactor;
+};
 #endif

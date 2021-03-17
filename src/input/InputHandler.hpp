@@ -36,6 +36,17 @@ class InputHandler {
     if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       esc->execute();
     }
+    if (glfwGetKey(m_window, GLFW_KEY_MINUS) == GLFW_PRESS) {
+      minus->execute();
+    }
+    if (glfwGetKey(m_window, GLFW_KEY_EQUAL) == GLFW_PRESS) {
+      plus->execute();
+    }
+  }
+
+  void bindScaleCommands(std::vector<CubeStruct>& cubes) {
+    plus = (Command*)new ScaleCubesCommand(0.01f, cubes);
+    minus = (Command*)new ScaleCubesCommand(-0.01f, cubes);
   }
 
  private:
@@ -58,5 +69,7 @@ class InputHandler {
   Command* r;
   Command* f;
   Command* esc;
+  Command* plus;
+  Command* minus;
 };
 #endif
