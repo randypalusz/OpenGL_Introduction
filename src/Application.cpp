@@ -128,6 +128,8 @@ void Application::run() {
 
   Crosshair crosshair{m_window, &crosshairShader, &crosshairTexture};
 
+  InputHandler handler{m_window, m_camera};
+
   std::vector<CubeStruct> cubes{
       {glm::vec3(0.0f, 0.0f, -3.0f), {m_window, &shaders.at(0), &texture}, 0.05f},
       {glm::vec3(2.0f, 5.0f, -15.0f), {m_window, &shaders.at(0), &texture}, 0.6f},
@@ -165,7 +167,8 @@ void Application::run() {
     logicUpdate(logicTimer, cubes, colors, increment);
 
     // process input
-    processKeyInput(m_window, *m_camera, renderTimer.deltaTime);
+    // processKeyInput(m_window, *m_camera, renderTimer.deltaTime);
+    handler.handleInput(renderTimer.deltaTime);
 
     // update camera of each shader
     updateShaderCamera(shaders);

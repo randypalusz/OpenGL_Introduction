@@ -11,7 +11,6 @@ struct TextureParams {
   unsigned char* data;
 };
 
-// TODO: 3D texture support - only doing 2D for now
 class Texture {
  public:
   explicit Texture(const std::string& filePath);

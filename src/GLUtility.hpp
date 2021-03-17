@@ -14,12 +14,6 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
 
 void onWindowResize(GLFWwindow* window, int width, int height);
 
-void processKeyInput(GLFWwindow* window, Camera& camera, float deltaTime);
-
-void processScroll(GLFWwindow* window, double xoffset, double yoffset);
-
-void processMouse(GLFWwindow* window, double xpos, double ypos);
-
 auto shaderTypeToString(GLenum shaderType) -> std::string;
 
 #endif

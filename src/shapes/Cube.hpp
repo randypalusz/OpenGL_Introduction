@@ -26,13 +26,6 @@ class CubeAttributes {
 
  private:
   CubeAttributes() {
-    // positions = new float[20]{
-    //     // positions  // tex coords
-    //     -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // vertex 1
-    //     0.5f,  -0.5f, 0.0f, 1.0f, 0.0f,  // vertex 2
-    //     0.5f,  0.5f,  0.0f, 1.0f, 1.0f,  // vertex 3
-    //     -0.5f, 0.5f,  0.0f, 0.0f, 1.0f   // vertex 4
-    // };
     positions = new float[180]{
         -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  //
         0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,  //
@@ -82,7 +75,7 @@ class CubeAttributes {
     // };
     // (starts at index 0, length = 6 unsigned ints, data is in the indices array)
     // ibo.setAttributes(0, sizeof(unsigned int) * 6, indices);
-    // (starts at index 0, length = 20 floats, data is in the positions array)
+    // (starts at index 0, length = 180 floats, data is in the positions array)
     vbo.setAttributes(0, sizeof(float) * 180, positions);
 
     // (vertex coordinates)

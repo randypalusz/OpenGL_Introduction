@@ -61,45 +61,13 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
       errorTypeString = "UNKNOWN ERROR TYPE";
       break;
   }
-  // fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-  //         (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), type, severity,
-  //         message);
   fprintf(stderr, "GL CALLBACK: type = %s, severity = %s, message = %s\n",
           errorTypeString.c_str(), sevString.c_str(), message);
-}
-
-void processKeyInput(GLFWwindow* window, Camera& camera, float deltaTime) {
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-    camera.keyMovement(Movement::FORWARD, deltaTime);
-  }
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-    camera.keyMovement(Movement::BACKWARD, deltaTime);
-  }
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-    camera.keyMovement(Movement::LEFT, deltaTime);
-  }
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-    camera.keyMovement(Movement::RIGHT, deltaTime);
-  }
-  if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-    camera.keyMovement(Movement::UP, deltaTime);
-  }
-  if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-    camera.keyMovement(Movement::DOWN, deltaTime);
-  }
-
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, true);
-  }
 }
 
 void onWindowResize(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
 }
-
-void processScroll(GLFWwindow* window, double xoffset, double yoffset) {}
-
-void processMouse(GLFWwindow* window, double xpos, double ypos) {}
 
 auto shaderTypeToString(GLenum shaderType) -> std::string {
   std::string strType;
