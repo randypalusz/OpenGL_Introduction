@@ -5,7 +5,6 @@ layout(location=1) in vec2 a_texCoords;
 
 out vec2 texCoords;
 
-// uniform mat4 u_transformMatrix;
 uniform mat4 u_projection;
 uniform mat4 u_view;
 uniform mat4 u_model;

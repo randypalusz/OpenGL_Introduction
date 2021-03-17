@@ -32,7 +32,9 @@ auto Application::init() -> int {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-  GLFWwindow* window = glfwCreateWindow(m_width, m_height, "InitGL", nullptr, nullptr);
+  GLFWwindow* window =
+      glfwCreateWindow(m_width, m_height, "InitGL",
+                       ((m_fullScreen) ? glfwGetPrimaryMonitor() : nullptr), nullptr);
   if (!window) {
     fprintf(stderr, "Unable to create GLFW window\n");
     glfwTerminate();

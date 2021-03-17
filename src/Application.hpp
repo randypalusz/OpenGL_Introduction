@@ -30,11 +30,13 @@ struct CubeStruct {
 
 class Application {
  public:
-  Application(int width, int height, int majorVersion, int minorVersion)
+  Application(int width, int height, int majorVersion, int minorVersion,
+              bool fullScreen = false)
       : m_width{width},
         m_height{height},
         m_majorVersion{majorVersion},
-        m_minorVersion{minorVersion} {
+        m_minorVersion{minorVersion},
+        m_fullScreen{fullScreen} {
     m_mouseParams = new MouseParams(m_width, m_height);
   }
   ~Application() = default;
@@ -52,6 +54,7 @@ class Application {
   int m_height;
   int m_majorVersion;
   int m_minorVersion;
+  bool m_fullScreen;
   GLFWwindow* m_window = nullptr;
   Camera* m_camera;
   MouseParams* m_mouseParams;

@@ -42,9 +42,7 @@ class CrosshairAttributes {
     vbo.setAttributes(0, sizeof(float) * 20, positions);
 
     vao.setAttributes(vbo, 0, 3, GL_FLOAT, sizeof(float) * 5, 0);
-
     vao.setAttributes(vbo, 1, 2, GL_FLOAT, sizeof(float) * 5, 3 * sizeof(float));
-
     vao.setAttributes(ibo, 2, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
   };
 };
@@ -55,7 +53,9 @@ class Crosshair {
     glfwGetWindowSize(window, &m_windowWidth, &m_windowHeight);
     m_texture = texture;
     m_shader = shader;
-    m_model = glm::scale(m_model, glm::vec3(0.05f, 0.05f, 0.05f));
+    float aspectRatio = (float)m_windowWidth / (float)m_windowHeight;
+    float scale = 0.03f;
+    m_model = glm::scale(m_model, glm::vec3(scale, scale * aspectRatio, scale));
   }
 
   void draw() const {
@@ -92,6 +92,7 @@ class Crosshair {
   int m_windowWidth;
   int m_windowHeight;
   glm::vec4 m_color{1.0f, 1.0f, 1.0f, 1.0f};
+  glm::mat4 m_projection = glm::mat4(1.0f);
   glm::mat4 m_model = glm::mat4(1.0f);
 };
 
