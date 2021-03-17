@@ -8,7 +8,7 @@
 
 int main() {
 #ifdef _WIN32
-  Application p{1600, 1200, 4, 6};
+  Application p{1600, 1200, 4, 6, FullscreenMode::BORDERLESS};
 #else
   Application p{800, 800, 4, 1};
 #endif

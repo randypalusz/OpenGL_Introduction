@@ -27,14 +27,37 @@ auto Application::init() -> int {
     return 0;
   }
 
+  GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+  const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_majorVersion);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_minorVersion);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 
-  GLFWwindow* window =
-      glfwCreateWindow(m_width, m_height, "InitGL",
-                       ((m_fullScreen) ? glfwGetPrimaryMonitor() : nullptr), nullptr);
+  GLFWwindow* window = nullptr;
+
+  switch (m_fullscreenMode) {
+    case FullscreenMode::BORDERLESS:
+      m_width = mode->width;
+      m_height = mode->height;
+      window = glfwCreateWindow(mode->width, mode->height, "InitGL",
+                                glfwGetPrimaryMonitor(), nullptr);
+      break;
+    case FullscreenMode::EXCLUSIVE:
+      window = glfwCreateWindow(m_width, m_height, "InitGL", monitor, nullptr);
+      break;
+    case FullscreenMode::WINDOWED:
+      window = glfwCreateWindow(m_width, m_height, "InitGL", nullptr, nullptr);
+      break;
+    default:
+      break;
+  }
+  // if (m_fullScreen) {
+  // } else {
+  //   window = glfwCreateWindow(m_width, m_height, "InitGL", nullptr, nullptr);
+  // }
   if (!window) {
     fprintf(stderr, "Unable to create GLFW window\n");
     glfwTerminate();

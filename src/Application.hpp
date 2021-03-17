@@ -12,6 +12,8 @@
 #include "Timer.hpp"
 #include "shapes/Cube.hpp"
 
+enum class FullscreenMode { BORDERLESS, WINDOWED, EXCLUSIVE };
+
 struct MouseParams {
   bool firstMouse;
   double lastX;
@@ -31,12 +33,12 @@ struct CubeStruct {
 class Application {
  public:
   Application(int width, int height, int majorVersion, int minorVersion,
-              bool fullScreen = false)
+              FullscreenMode mode = FullscreenMode::WINDOWED)
       : m_width{width},
         m_height{height},
         m_majorVersion{majorVersion},
         m_minorVersion{minorVersion},
-        m_fullScreen{fullScreen} {
+        m_fullscreenMode{mode} {
     m_mouseParams = new MouseParams(m_width, m_height);
   }
   ~Application() = default;
@@ -54,7 +56,7 @@ class Application {
   int m_height;
   int m_majorVersion;
   int m_minorVersion;
-  bool m_fullScreen;
+  FullscreenMode m_fullscreenMode;
   GLFWwindow* m_window = nullptr;
   Camera* m_camera;
   MouseParams* m_mouseParams;
