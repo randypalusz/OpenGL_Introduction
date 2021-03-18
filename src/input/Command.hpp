@@ -70,12 +70,12 @@ class ScaleCubesCommand : Command {
     m_scaleFactor = scaleFactor;
   };
 
-  virtual void execute(float deltaTime){};
-  virtual void execute() {
+  virtual void execute(float deltaTime) {
     for (CubeStruct& cube : m_cubes) {
-      cube.cube.adjustScale(m_scaleFactor);
+      cube.cube.adjustScale(m_scaleFactor * deltaTime);
     }
-  }
+  };
+  virtual void execute() {}
 
  private:
   std::vector<CubeStruct>& m_cubes;

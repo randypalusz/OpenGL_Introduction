@@ -139,14 +139,14 @@ class Cube {
     m_model = glm::rotate(m_model, glm::radians(radians), glm::vec3(0.5f, 1.0f, 0.0f));
   }
   void setScale(const float scale) {
-    m_model = glm::scale(m_model, glm::vec3(1 / m_scale, 1 / m_scale, 1 / m_scale));
+    this->resetScale();
     m_scale = scale;
     m_scale = std::clamp(m_scale, 0.2f, 10.0f);
     m_model = glm::scale(m_model, glm::vec3(m_scale, m_scale, m_scale));
   }
   void adjustScale(const float scaleAdjustment) {
-    m_model = glm::scale(m_model, glm::vec3(1 / m_scale, 1 / m_scale, 1 / m_scale));
-    float scaleFactor = (1 + scaleAdjustment);
+    this->resetScale();
+    float scaleFactor = 1.0f + scaleAdjustment;
     m_scale = m_scale * scaleFactor;
     m_scale = std::clamp(m_scale, 0.2f, 10.0f);
     m_model = glm::scale(m_model, glm::vec3(m_scale, m_scale, m_scale));
@@ -158,6 +158,9 @@ class Cube {
   ~Cube() = default;
 
  private:
+  inline void resetScale() {
+    m_model = glm::scale(m_model, glm::vec3(1 / m_scale, 1 / m_scale, 1 / m_scale));
+  }
   CubeAttributes& attributes = CubeAttributes::get();
   // vertex buffer contains information about each vertex
   VertexBufferObject& m_vbo = attributes.vbo;
