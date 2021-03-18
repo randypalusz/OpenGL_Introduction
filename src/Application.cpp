@@ -62,9 +62,9 @@ auto Application::init() -> int {
   }
 
   glfwMakeContextCurrent(window);
-  // disables vsync
+  // vsync toggle
   // TODO: add input parameter to determine vsync or not
-  glfwSwapInterval(0);
+  glfwSwapInterval(m_vsync ? 1 : 0);
 
   m_window = window;
   glfwSetWindowUserPointer(m_window, reinterpret_cast<void*>(this));

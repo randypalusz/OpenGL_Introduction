@@ -33,12 +33,13 @@ struct CubeStruct {
 class Application {
  public:
   Application(int width, int height, int majorVersion, int minorVersion,
-              FullscreenMode mode = FullscreenMode::WINDOWED)
+              FullscreenMode mode = FullscreenMode::WINDOWED, bool vsync = true)
       : m_width{width},
         m_height{height},
         m_majorVersion{majorVersion},
         m_minorVersion{minorVersion},
-        m_fullscreenMode{mode} {
+        m_fullscreenMode{mode},
+        m_vsync{vsync} {
     m_mouseParams = new MouseParams(m_width, m_height);
   }
   ~Application() = default;
@@ -57,6 +58,7 @@ class Application {
   int m_majorVersion;
   int m_minorVersion;
   FullscreenMode m_fullscreenMode;
+  bool m_vsync;
   GLFWwindow* m_window = nullptr;
   Camera* m_camera;
   MouseParams* m_mouseParams;
