@@ -54,10 +54,7 @@ auto Application::init() -> int {
     default:
       break;
   }
-  // if (m_fullScreen) {
-  // } else {
-  //   window = glfwCreateWindow(m_width, m_height, "InitGL", nullptr, nullptr);
-  // }
+
   if (!window) {
     fprintf(stderr, "Unable to create GLFW window\n");
     glfwTerminate();
@@ -65,6 +62,9 @@ auto Application::init() -> int {
   }
 
   glfwMakeContextCurrent(window);
+  // disables vsync
+  // TODO: add input parameter to determine vsync or not
+  glfwSwapInterval(0);
 
   m_window = window;
   glfwSetWindowUserPointer(m_window, reinterpret_cast<void*>(this));
@@ -151,18 +151,31 @@ void Application::run() {
   handler.bindScaleCommands(cubes);
 
   glm::vec4 colors{0.15f, 1.0f, 1.0f, 1.0f};
+  unsigned int numFrames = 0;
   Timer<float> renderTimer{0.0f};
   TimePointTimer logicTimer{};
+
+  // used for fps debugging
+  TimePointTimer frameTimer{};
+
   float increment = 0.02f;
   while (!glfwWindowShouldClose(m_window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     logicTimer.tick(false);
 
-    // output frame time
     renderTimer.tick(glfwGetTime());
+
+// output FPS to title
 #ifndef NDEBUG
-    std::cout << renderTimer.deltaTime << std::endl;
+    numFrames++;
+    frameTimer.tick(false);
+    if (frameTimer.deltaTime >= 1000000) {
+      std::string fpsString = "FPS: " + std::to_string(numFrames);
+      frameTimer.tick();
+      numFrames = 0;
+      glfwSetWindowTitle(m_window, fpsString.c_str());
+    }
 #endif
 
     // update logic
