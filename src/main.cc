@@ -13,7 +13,7 @@ int main() {
   Application p{800, 800, 4, 1};
 #endif
 
-  if (!p.init()) {
+  if (!p.initApp()) {
     return 0;
   }
   p.run();

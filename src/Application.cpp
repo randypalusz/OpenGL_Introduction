@@ -20,7 +20,7 @@
 #include "Timer.hpp"
 #include "shapes/Crosshair.hpp"
 
-auto Application::init() -> int {
+auto Application::initApp() -> int {
   int glfwInitRes = glfwInit();
   if (!glfwInitRes) {
     fprintf(stderr, "Unable to initialize GLFW\n");
@@ -91,56 +91,30 @@ auto Application::init() -> int {
     glfwTerminate();
     return 0;
   }
-#ifdef _WIN32
-#ifndef NDEBUG
-  // enable debug output after glad is loaded
-  glEnable(GL_DEBUG_OUTPUT);
-  glDebugMessageCallback(MessageCallback, 0);
-#endif
-#endif
 
-  std::cout << glGetString(GL_VERSION) << std::endl;
-
-  // perform depth test for 3D
-  glEnable(GL_DEPTH_TEST);
-
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  // messing with different blend functions
-  // glBlendFunc(GL_DST_ALPHA, GL_ONE);
-
-  // Set the clear color to a nice green
-  glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
-
-  m_camera = new Camera{glm::vec3(0.0f, 0.0f, 3.0f)};
+  initInternal();
 
   return 1;
 }
 
 void Application::run() {
-  // intended for non-UI things (objects that will need to be transformed for the camera)
-  std::vector<Shader> shaders{{"res/VertexShader.glsl", "res/FragmentShader.glsl"}};
-  // separated as it will not move once drawn
-  Shader crosshairShader{"res/crosshair.vs", "res/crosshair.fs"};
-  Texture texture("res/wall.jpg");
-  Texture crosshairTexture{"res/crosshair.png"};
-
-  Crosshair crosshair{m_window, &crosshairShader, &crosshairTexture};
+  Crosshair crosshair{m_window, &m_cameraIndependentShaders.at("Crosshair"),
+                      &m_Textures.at("Crosshair")};
 
   InputHandler handler{m_window, m_camera};
 
-  std::vector<CubeStruct> cubes{
-      {glm::vec3(0.0f, 0.0f, -3.0f), {m_window, &shaders.at(0), &texture}, 0.05f},
-      {glm::vec3(2.0f, 5.0f, -15.0f), {m_window, &shaders.at(0), &texture}, 0.6f},
-      {glm::vec3(-1.5f, -2.2f, -2.5f), {m_window, &shaders.at(0), &texture}, 0.8f},
-      {glm::vec3(-3.8f, -2.0f, -12.3f), {m_window, &shaders.at(0), &texture}, 0.1f},
-      {glm::vec3(2.4f, -0.4f, -3.5f), {m_window, &shaders.at(0), &texture}, 0.3f},
-      {glm::vec3(-1.7f, 3.0f, -7.5f), {m_window, &shaders.at(0), &texture}, 0.2f},
-      {glm::vec3(1.3f, -2.0f, -2.5f), {m_window, &shaders.at(0), &texture}, 0.16f},
-      {glm::vec3(1.5f, 2.0f, -2.5f), {m_window, &shaders.at(0), &texture}, 0.32f},
-      {glm::vec3(1.5f, 0.2f, -1.5f), {m_window, &shaders.at(0), &texture}, 0.23f},
-      {glm::vec3(-1.3f, 1.0f, -1.5f), {m_window, &shaders.at(0), &texture}, 0.02f}};
+  Cube cube{m_window, &m_shaders.at("Cube"), &m_Textures.at("Cube")};
+
+  std::vector<CubeStruct> cubes{{glm::vec3(0.0f, 0.0f, -3.0f), cube, 0.05f},
+                                {glm::vec3(2.0f, 5.0f, -15.0f), cube, 0.6f},
+                                {glm::vec3(-1.5f, -2.2f, -2.5f), cube, 0.8f},
+                                {glm::vec3(-3.8f, -2.0f, -12.3f), cube, 0.1f},
+                                {glm::vec3(2.4f, -0.4f, -3.5f), cube, 0.3f},
+                                {glm::vec3(-1.7f, 3.0f, -7.5f), cube, 0.2f},
+                                {glm::vec3(1.3f, -2.0f, -2.5f), cube, 0.16f},
+                                {glm::vec3(1.5f, 2.0f, -2.5f), cube, 0.32f},
+                                {glm::vec3(1.5f, 0.2f, -1.5f), cube, 0.23f},
+                                {glm::vec3(-1.3f, 1.0f, -1.5f), cube, 0.02f}};
 
   for (CubeStruct& cubeStruct : cubes) {
     cubeStruct.cube.movePosition(cubeStruct.position);
@@ -151,11 +125,11 @@ void Application::run() {
   handler.bindScaleCommands(cubes);
 
   glm::vec4 colors{0.15f, 1.0f, 1.0f, 1.0f};
-  unsigned int numFrames = 0;
   Timer<float> renderTimer{0.0f};
   TimePointTimer logicTimer{};
 
   // used for fps debugging
+  unsigned int numFrames = 0;
   TimePointTimer frameTimer{};
 
   float increment = 0.02f;
@@ -182,11 +156,10 @@ void Application::run() {
     logicUpdate(logicTimer, cubes, colors, increment);
 
     // process input
-    // processKeyInput(m_window, *m_camera, renderTimer.deltaTime);
     handler.handleInput(renderTimer.deltaTime);
 
     // update camera of each shader
-    updateShaderCamera(shaders);
+    updateShaderCamera();
 
     // draw cubes
     for (CubeStruct& cubeStruct : cubes) {
@@ -224,15 +197,16 @@ void Application::mouseCallback(double xpos, double ypos) {
   m_camera->mouseMovement(xoffset, yoffset);
 }
 
-void Application::updateShaderCamera(std::vector<Shader>& shaders) {
-  for (Shader& shader : shaders) {
+void Application::updateShaderCamera() {
+  for (auto it = m_shaders.begin(); it != m_shaders.end(); it++) {
+    Shader& currentShader = it->second;
     glm::mat4 projection =
         glm::perspective(glm::radians(m_camera->getZoom()),
                          (float)m_width / (float)m_height, 0.1f, 100.0f);
 
     glm::mat4 view = m_camera->getViewMatrix();
-    shader.setUniform("u_projection", projection);
-    shader.setUniform("u_view", view);
+    currentShader.setUniform("u_projection", projection);
+    currentShader.setUniform("u_view", view);
   }
 }
 
@@ -254,4 +228,45 @@ void Application::logicUpdate(TimePointTimer& logicTimer, std::vector<CubeStruct
       cubeStruct.cube.rotate(cubeStruct.rotation);
     }
   }
+}
+
+void Application::initInternal() {
+  this->initGL();
+  this->initShaders();
+  this->initTextures();
+}
+
+void Application::initGL() {
+#ifdef _WIN32
+#ifndef NDEBUG
+  // enable debug output after glad is loaded
+  glEnable(GL_DEBUG_OUTPUT);
+  glDebugMessageCallback(MessageCallback, 0);
+#endif
+#endif
+
+  std::cout << glGetString(GL_VERSION) << std::endl;
+
+  // perform depth test for 3D
+  glEnable(GL_DEPTH_TEST);
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  // messing with different blend functions
+  // glBlendFunc(GL_DST_ALPHA, GL_ONE);
+
+  // Set the clear color to a nice green
+  glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
+}
+
+void Application::initTextures() {
+  m_Textures.emplace("Cube", Texture{"res/wall.jpg"});
+  m_Textures.emplace("Crosshair", Texture{"res/crosshair.png"});
+}
+
+void Application::initShaders() {
+  m_shaders.emplace("Cube", Shader{"res/VertexShader.glsl", "res/FragmentShader.glsl"});
+  m_cameraIndependentShaders.emplace("Crosshair",
+                                     Shader{"res/crosshair.vs", "res/crosshair.fs"});
 }

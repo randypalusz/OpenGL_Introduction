@@ -6,11 +6,13 @@
 #include <glm/glm.hpp>
 
 #include <vector>
+#include <unordered_map>
 
 #include "GLUtility.hpp"
 #include "Shader.hpp"
 #include "Timer.hpp"
 #include "shapes/Cube.hpp"
+#include "Texture.hpp"
 
 enum class FullscreenMode { BORDERLESS, WINDOWED, EXCLUSIVE };
 
@@ -43,16 +45,20 @@ class Application {
     m_mouseParams = new MouseParams(m_width, m_height);
   }
   ~Application() = default;
-  auto init() -> int;
+  auto initApp() -> int;
   auto getWindow() -> GLFWwindow* { return m_window; }
   void run();
-  void updateShaderCamera(std::vector<Shader>& shaders);
-  void logicUpdate(TimePointTimer& timer, std::vector<CubeStruct>& cubes,
-                   glm::vec4& colors, float& increment);
 
  private:
   void scrollCallback(double yoffset);
   void mouseCallback(double xpos, double ypos);
+  void initShaders();
+  void initTextures();
+  void initGL();
+  void initInternal();
+  void updateShaderCamera();
+  void logicUpdate(TimePointTimer& timer, std::vector<CubeStruct>& cubes,
+                   glm::vec4& colors, float& increment);
   int m_width;
   int m_height;
   int m_majorVersion;
@@ -60,8 +66,11 @@ class Application {
   FullscreenMode m_fullscreenMode;
   bool m_vsync;
   GLFWwindow* m_window = nullptr;
-  Camera* m_camera;
+  Camera* m_camera = new Camera(glm::vec3{0.0f, 0.0f, 3.0f});
   MouseParams* m_mouseParams;
+  std::unordered_map<std::string, Shader> m_shaders;
+  std::unordered_map<std::string, Shader> m_cameraIndependentShaders;
+  std::unordered_map<std::string, Texture> m_Textures;
 };
 
 #endif

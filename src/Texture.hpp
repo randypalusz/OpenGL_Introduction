@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <string>
+#include <utility>
 
 struct TextureParams {
   int width, height, numChannels;
@@ -17,6 +18,12 @@ class Texture {
   ~Texture();
   // delete copy constructor
   Texture(const Texture&) = delete;
+  // move constructor - used for temporary creation of object to store in map
+  // e.g. m_map.emplace("thing", Texture{"path"});
+  Texture(Texture&& fromTex) {
+    params = std::move(fromTex.params);
+    m_handle = std::exchange(fromTex.m_handle, 0);
+  }
   void bind() const;
   static void unbind();
   void setAttributes();

@@ -4,6 +4,8 @@
 
 #include <string>
 #include <unordered_map>
+#include <utility>
+
 struct UniformParams {
   GLenum type;
   int location;
@@ -11,7 +13,15 @@ struct UniformParams {
 
 class Shader {
  public:
-  Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+  explicit Shader(const std::string& vertexShaderPath,
+                  const std::string& fragmentShaderPath);
+  // delete copy constructor
+  Shader(const Shader&) = delete;
+  // move constructor
+  Shader(Shader&& fromShader) {
+    m_handle = std::exchange(fromShader.m_handle, 0);
+    m_uniformMap = std::move(fromShader.m_uniformMap);
+  }
   void use() const;
   /// \brief Templated setUniform function for glm types
   template <typename T>
