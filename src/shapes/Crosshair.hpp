@@ -77,6 +77,9 @@ class Crosshair {
     // set polygon draw mode
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+    // clear depth buffer bit so crosshair is drawn on top
+    glClear(GL_DEPTH_BUFFER_BIT);
+
     // draw
     // glDrawElements if index buffer
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

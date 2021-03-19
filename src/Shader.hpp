@@ -17,7 +17,7 @@ class Shader {
                   const std::string& fragmentShaderPath);
   // delete copy constructor
   Shader(const Shader&) = delete;
-  // move constructor
+  // move constructor - used for temporary creation of object to store in map
   Shader(Shader&& fromShader) {
     m_handle = std::exchange(fromShader.m_handle, 0);
     m_uniformMap = std::move(fromShader.m_uniformMap);
