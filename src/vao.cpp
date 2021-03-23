@@ -47,3 +47,17 @@ void VertexArrayObject::setAttributes(const VertexBufferObject& vbo, unsigned in
 
   glEnableVertexAttribArray(index);
 }
+
+void VertexArrayObject::setLayout(const VertexBufferObject& vbo,
+                                  const VertexBufferLayout& layout) {
+  this->bind();
+  vbo.bind();
+
+  unsigned int i = 0;
+  for (const LayoutElement& element : layout.getElements()) {
+    glVertexAttribPointer(i, element.numElements, element.type, GL_FALSE,
+                          layout.getStride(), (const void*)element.offset);
+    glEnableVertexAttribArray(i);
+    i++;
+  }
+}

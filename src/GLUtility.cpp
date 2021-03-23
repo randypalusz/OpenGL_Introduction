@@ -84,3 +84,27 @@ auto shaderTypeToString(GLenum shaderType) -> std::string {
   }
   return strType;
 }
+
+template <typename T>
+GLenum typeToGL() {
+  switch (typeid(T)) {
+    case typeid(float):
+      return GL_FLOAT;
+    case typeid(double):
+      return GL_DOUBLE;
+    case typeid(char):
+      return GL_BYTE;
+    case typeid(unsigned char):
+      return GL_UNSIGNED_BYTE;
+    case typeid(int):
+      return GL_INT;
+    case typeid(unsigned int):
+      return GL_UNSIGNED_INT;
+    case typeid(short):
+      return GL_SHORT;
+    case typeid(unsigned short):
+      return GL_UNSIGNED_SHORT;
+    default:
+      return GL_INVALID_ENUM;
+  }
+}

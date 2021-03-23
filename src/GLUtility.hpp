@@ -16,4 +16,7 @@ void onWindowResize(GLFWwindow* window, int width, int height);
 
 auto shaderTypeToString(GLenum shaderType) -> std::string;
 
+template <typename T>
+GLenum typeToGL();
+
 #endif

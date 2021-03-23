@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include "vbo.hpp"
+#include "vbLayout.hpp"
 
 class VertexArrayObject {
  public:
@@ -20,6 +21,7 @@ class VertexArrayObject {
   void setAttributes(const VertexBufferObject& vbo, unsigned int index,
                      unsigned int numComponents, GLenum type, unsigned int stride,
                      size_t offset);
+  void setLayout(const VertexBufferObject& vbo, const VertexBufferLayout& layout);
 
  private:
   unsigned int m_handle;

@@ -22,6 +22,7 @@ set(SOURCES
   ${SRC_DIR}/vao.cpp
   ${SRC_DIR}/vbo.cpp
   ${SRC_DIR}/Texture.cpp
+  ${SRC_DIR}/vbLayout.cpp
 )
 
 set(HEADERS 
@@ -36,6 +37,7 @@ set(HEADERS
   ${SRC_DIR}/input/InputHandler.hpp
   ${SRC_DIR}/Camera.hpp
   ${SRC_DIR}/Timer.hpp
+  ${SRC_DIR}/vbLayout.hpp
 )
 
 # adding executable, changing executable suffix for windows
