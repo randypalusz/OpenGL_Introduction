@@ -14,12 +14,13 @@ struct LayoutElement {
 };
 
 // go in order from first to last element when pushing
+// TODO: maybe make instances of this part of the VertexBufferElement class?
 class VertexBufferLayout {
  public:
   VertexBufferLayout() = default;
   ~VertexBufferLayout() = default;
   template <typename T>
-  void push(int numElements);
+  void push(size_t numElements);
   const std::vector<LayoutElement>& getElements() const;
   const size_t getStride() const;
 

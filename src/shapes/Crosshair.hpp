@@ -9,6 +9,8 @@
 #include "vbo.hpp"
 #include "Texture.hpp"
 #include "Shader.hpp"
+#include "vbLayout.hpp"
+
 class CrosshairAttributes {
  public:
   static CrosshairAttributes& get() {
@@ -41,9 +43,14 @@ class CrosshairAttributes {
     ibo.setAttributes(0, sizeof(unsigned int) * 6, indices);
     vbo.setAttributes(0, sizeof(float) * 20, positions);
 
-    vao.setAttributes(vbo, 0, 3, GL_FLOAT, sizeof(float) * 5, 0);
-    vao.setAttributes(vbo, 1, 2, GL_FLOAT, sizeof(float) * 5, 3 * sizeof(float));
-    vao.setAttributes(ibo, 2, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
+    VertexBufferLayout vbLayout{};
+    VertexBufferLayout ibLayout{};
+    vbLayout.push<float>(3);
+    vbLayout.push<float>(2);
+    ibLayout.push<unsigned int>(1);
+
+    vao.pushLayout(vbo, vbLayout);
+    vao.pushLayout(ibo, ibLayout);
   };
 };
 

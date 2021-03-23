@@ -87,24 +87,46 @@ auto shaderTypeToString(GLenum shaderType) -> std::string {
 
 template <typename T>
 GLenum typeToGL() {
-  switch (typeid(T)) {
-    case typeid(float):
-      return GL_FLOAT;
-    case typeid(double):
-      return GL_DOUBLE;
-    case typeid(char):
-      return GL_BYTE;
-    case typeid(unsigned char):
-      return GL_UNSIGNED_BYTE;
-    case typeid(int):
-      return GL_INT;
-    case typeid(unsigned int):
-      return GL_UNSIGNED_INT;
-    case typeid(short):
-      return GL_SHORT;
-    case typeid(unsigned short):
-      return GL_UNSIGNED_SHORT;
-    default:
-      return GL_INVALID_ENUM;
-  }
+  if (typeid(T) == typeid(float)) {
+    return GL_FLOAT;
+  };
+
+  if (typeid(T) == typeid(double)) {
+    return GL_DOUBLE;
+  };
+
+  if (typeid(T) == typeid(char)) {
+    return GL_BYTE;
+  };
+
+  if (typeid(T) == typeid(unsigned char)) {
+    return GL_UNSIGNED_BYTE;
+  };
+
+  if (typeid(T) == typeid(int)) {
+    return GL_INT;
+  };
+
+  if (typeid(T) == typeid(unsigned int)) {
+    return GL_UNSIGNED_INT;
+  };
+
+  if (typeid(T) == typeid(short)) {
+    return GL_SHORT;
+  };
+
+  if (typeid(T) == typeid(unsigned short)) {
+    return GL_UNSIGNED_SHORT;
+  };
+
+  return GL_INVALID_ENUM;
 }
+
+template GLenum typeToGL<float>();
+template GLenum typeToGL<double>();
+template GLenum typeToGL<char>();
+template GLenum typeToGL<unsigned char>();
+template GLenum typeToGL<int>();
+template GLenum typeToGL<unsigned int>();
+template GLenum typeToGL<short>();
+template GLenum typeToGL<unsigned short>();

@@ -8,6 +8,7 @@
 #include "vbo.hpp"
 #include "Texture.hpp"
 #include "Shader.hpp"
+#include "vbLayout.hpp"
 
 // Singleton that will hold common square attributes (index buffer, vbo)
 class CubeAttributes {
@@ -69,32 +70,13 @@ class CubeAttributes {
         -0.5f, 0.5f,  0.5f,  0.0f, 0.0f,  //
         -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f   //
     };
-    // indices = new unsigned int[6]{
-    //     0, 1, 2,  // triangle 1
-    //     2, 3, 0   // triangle 2
-    // };
-    // (starts at index 0, length = 6 unsigned ints, data is in the indices array)
-    // ibo.setAttributes(0, sizeof(unsigned int) * 6, indices);
-    // (starts at index 0, length = 180 floats, data is in the positions array)
     vbo.setAttributes(0, sizeof(float) * 180, positions);
 
-    // (vertex coordinates)
-    // (bind vertex buffer, choose index 0, 3 elements for this attribute(x,y,z), float,
-    //  distance from this attribute to the next one is the length of 5 floats in bytes,
-    //  the first position starts at index 0 in the vertex array)
-    vao.setAttributes(vbo, 0, 3, GL_FLOAT, sizeof(float) * 5, 0);
+    VertexBufferLayout layout{};
+    layout.push<float>(3);
+    layout.push<float>(2);
 
-    // (texture coordinates)
-    // (bind vertex buffer, choose index 1, 2 elements for this attribute(x,y), float,
-    //  distance from this attribute to the next one is the length of 5 floats in bytes,
-    //  the first position starts at index 3 in the index array)
-    vao.setAttributes(vbo, 1, 2, GL_FLOAT, sizeof(float) * 5, 3 * sizeof(float));
-
-    // (bind index buffer, choose index 2, 1 element for this attribute (just index),
-    // uint,
-    //  distance from this attribute to the next one is the length of one uint in bytes,
-    //  the first position starts at index 0 in the index array)
-    // m_vao.setAttributes(m_ibo, 2, 1, GL_UNSIGNED_INT, sizeof(unsigned int), 0);
+    vao.pushLayout(vbo, layout);
   };
 };
 

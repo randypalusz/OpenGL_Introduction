@@ -18,13 +18,14 @@ class VertexArrayObject {
   // using a const reference here to avoid the destructor being called
   // passing in just VertexBufferObject would make a copy (obviously including the
   // m_handle) and the destructor is called, deleting the vbo from the OpenGL context
-  void setAttributes(const VertexBufferObject& vbo, unsigned int index,
-                     unsigned int numComponents, GLenum type, unsigned int stride,
-                     size_t offset);
-  void setLayout(const VertexBufferObject& vbo, const VertexBufferLayout& layout);
+  [[deprecated("Replaced by pushLayout")]] void setAttributes(
+      const VertexBufferObject& vbo, unsigned int index, unsigned int numComponents,
+      GLenum type, unsigned int stride, size_t offset);
+  void pushLayout(const VertexBufferObject& vbo, const VertexBufferLayout& layout);
 
  private:
   unsigned int m_handle;
+  unsigned int m_index = 0;
 };
 
 #endif

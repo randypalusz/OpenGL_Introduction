@@ -34,9 +34,11 @@ void VertexArrayObject::destroy() {
 /// \param stride The distance between consecutive elements (in Bytes)
 /// \param offset The position in the data array of the first occurrence of this attribute
 /// (in Bytes)
-void VertexArrayObject::setAttributes(const VertexBufferObject& vbo, unsigned int index,
-                                      unsigned int numComponents, GLenum type,
-                                      unsigned int stride, size_t offset) {
+[[deprecated]] void VertexArrayObject::setAttributes(const VertexBufferObject& vbo,
+                                                     unsigned int index,
+                                                     unsigned int numComponents,
+                                                     GLenum type, unsigned int stride,
+                                                     size_t offset) {
   // std::cout << "Setting vao attr, handleID: " << m_handle << std::endl;
   this->bind();
   vbo.bind();
@@ -48,16 +50,15 @@ void VertexArrayObject::setAttributes(const VertexBufferObject& vbo, unsigned in
   glEnableVertexAttribArray(index);
 }
 
-void VertexArrayObject::setLayout(const VertexBufferObject& vbo,
-                                  const VertexBufferLayout& layout) {
+void VertexArrayObject::pushLayout(const VertexBufferObject& vbo,
+                                   const VertexBufferLayout& layout) {
   this->bind();
   vbo.bind();
 
-  unsigned int i = 0;
   for (const LayoutElement& element : layout.getElements()) {
-    glVertexAttribPointer(i, element.numElements, element.type, GL_FALSE,
+    glVertexAttribPointer(m_index, element.numElements, element.type, GL_FALSE,
                           layout.getStride(), (const void*)element.offset);
-    glEnableVertexAttribArray(i);
-    i++;
+    glEnableVertexAttribArray(m_index);
+    m_index++;
   }
 }
