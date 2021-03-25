@@ -34,11 +34,9 @@ void VertexArrayObject::destroy() {
 /// \param stride The distance between consecutive elements (in Bytes)
 /// \param offset The position in the data array of the first occurrence of this attribute
 /// (in Bytes)
-[[deprecated]] void VertexArrayObject::setAttributes(const VertexBufferObject& vbo,
-                                                     unsigned int index,
-                                                     unsigned int numComponents,
-                                                     GLenum type, unsigned int stride,
-                                                     size_t offset) {
+void VertexArrayObject::setAttributes(const VertexBufferObject& vbo, unsigned int index,
+                                      unsigned int numComponents, GLenum type,
+                                      unsigned int stride, size_t offset) {
   // std::cout << "Setting vao attr, handleID: " << m_handle << std::endl;
   this->bind();
   vbo.bind();

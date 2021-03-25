@@ -3,6 +3,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <vector>
 
 enum class VertexBufferType { VertexBuffer, IndexBuffer };
 
@@ -15,7 +16,13 @@ class VertexBufferObject {
   VertexBufferObject(const VertexBufferObject&) = delete;
   void bind() const;
   void destroy();
-  void setAttributes(size_t offsetInBytes, size_t numBytes, void* data);
+  [[deprecated("Replaced by setData")]] void setAttributes(size_t offsetInBytes,
+                                                           size_t numBytes, void* data);
+
+  // templated version of setAttributes assuming offset is 0,
+  // and want to capture entire data array
+  template <typename T>
+  void setData(const std::vector<T>& data);
 
  private:
   unsigned int m_handle;

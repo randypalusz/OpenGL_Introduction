@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <vector>
 #include "vao.hpp"
 #include "vbo.hpp"
 #include "Texture.hpp"
@@ -19,7 +20,8 @@ class CubeAttributes {
   }
   CubeAttributes(CubeAttributes const&) = delete;
   void operator=(CubeAttributes const&) = delete;
-  float* positions;
+  // float* positions;
+  std::vector<float> positions;
   unsigned int* indices;
   VertexArrayObject vao{};
   VertexBufferObject ibo{VertexBufferType::IndexBuffer};
@@ -27,7 +29,50 @@ class CubeAttributes {
 
  private:
   CubeAttributes() {
-    positions = new float[180]{
+    // positions = new float[180]{
+    //     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  //
+    //     0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,  //
+    //     0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,  //
+    //     0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,  //
+    //     -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f,  //
+    //     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  //
+
+    //     -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,  //
+    //     0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,  //
+    //     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  //
+    //     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  //
+    //     -0.5f, 0.5f,  0.5f,  0.0f, 1.0f,  //
+    //     -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,  //
+
+    //     -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,  //
+    //     -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f,  //
+    //     -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  //
+    //     -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  //
+    //     -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,  //
+    //     -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,  //
+
+    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  //
+    //     0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,  //
+    //     0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,  //
+    //     0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,  //
+    //     0.5f,  -0.5f, 0.5f,  0.0f, 0.0f,  //
+    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  //
+
+    //     -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  //
+    //     0.5f,  -0.5f, -0.5f, 1.0f, 1.0f,  //
+    //     0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,  //
+    //     0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,  //
+    //     -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,  //
+    //     -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  //
+
+    //     -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f,  //
+    //     0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,  //
+    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  //
+    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  //
+    //     -0.5f, 0.5f,  0.5f,  0.0f, 0.0f,  //
+    //     -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f   //
+    // };
+    positions = {
         -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  //
         0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,  //
         0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,  //
@@ -70,7 +115,8 @@ class CubeAttributes {
         -0.5f, 0.5f,  0.5f,  0.0f, 0.0f,  //
         -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f   //
     };
-    vbo.setAttributes(0, sizeof(float) * 180, positions);
+    // vbo.setAttributes(0, sizeof(float) * 180, positions);
+    vbo.setData(positions);
 
     VertexBufferLayout layout{};
     layout.push<float>(3);

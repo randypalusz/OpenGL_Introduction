@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <vector>
 #include "vao.hpp"
 #include "vbo.hpp"
 #include "Texture.hpp"
@@ -19,15 +20,17 @@ class CrosshairAttributes {
   }
   CrosshairAttributes(CrosshairAttributes const&) = delete;
   void operator=(CrosshairAttributes const&) = delete;
-  float* positions;
-  unsigned int* indices;
+  // float* positions;
+  std::vector<float> positions;
+  // unsigned int* indices;
+  std::vector<unsigned int> indices;
   VertexArrayObject vao{};
   VertexBufferObject ibo{VertexBufferType::IndexBuffer};
   VertexBufferObject vbo{VertexBufferType::VertexBuffer};
 
  private:
   CrosshairAttributes() {
-    positions = new float[20]{
+    positions = {
         // positions  // tex coords
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // vertex 1
         0.5f,  -0.5f, 0.0f, 1.0f, 0.0f,  // vertex 2
@@ -35,13 +38,13 @@ class CrosshairAttributes {
         -0.5f, 0.5f,  0.0f, 0.0f, 1.0f   // vertex 4
     };
 
-    indices = new unsigned int[6]{
+    indices = {
         0, 1, 2,  // triangle 1
         2, 3, 0   // triangle 2
     };
 
-    ibo.setAttributes(0, sizeof(unsigned int) * 6, indices);
-    vbo.setAttributes(0, sizeof(float) * 20, positions);
+    ibo.setData(indices);
+    vbo.setData(positions);
 
     VertexBufferLayout vbLayout{};
     VertexBufferLayout ibLayout{};

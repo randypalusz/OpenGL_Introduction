@@ -27,3 +27,14 @@ void VertexBufferObject::setAttributes(size_t offsetBytes, size_t numBytes, void
   this->bind();
   glBufferData(m_type, numBytes - offsetBytes, data, GL_STATIC_DRAW);
 }
+
+template <typename T>
+void VertexBufferObject::setData(const std::vector<T>& data) {
+  this->bind();
+  glBufferData(m_type, sizeof(T) * data.size(), &data[0], GL_STATIC_DRAW);
+}
+
+template void VertexBufferObject::setData(const std::vector<float>& data);
+template void VertexBufferObject::setData(const std::vector<unsigned int>& data);
+template void VertexBufferObject::setData(const std::vector<int>& data);
+template void VertexBufferObject::setData(const std::vector<short>& data);
