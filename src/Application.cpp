@@ -125,6 +125,40 @@ void Application::run() {
     // cubeStruct.cube.setScale(0.8f);
   }
 
+  // TODO: this is a hack - ensure that position move is done first, then set rotation
+  // TODO: move rigid body information into cube class
+  std::vector<glm::quat> rotations;
+  std::vector<btRigidBody*> rigidbodies;
+
+  // In this example, all monkeys will use the same collision shape :
+  // A box of 2m*2m*2m (1.0 is the half-extent !)
+  // TODO: make the bounding box dynamic according to the shape/size
+  btCollisionShape* boxCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f));
+  for (int i = 0; i < 10; i++) {
+    rotations.push_back(
+        glm::normalize(glm::quat(glm::vec3(rand() % 360, rand() % 360, rand() % 360))));
+    CubeStruct& cube = cubes.at(i);
+    cube.cube.setRotation(rotations.at(i));
+
+    btDefaultMotionState* motionstate = new btDefaultMotionState(
+        btTransform(btQuaternion(rotations.at(i).x, rotations.at(i).y, rotations.at(i).z,
+                                 rotations.at(i).w),
+                    btVector3(cube.position.x, cube.position.y, cube.position.z)));
+
+    btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
+        0,  // mass, in kg. 0 -> Static object, will never move.
+        motionstate,
+        boxCollisionShape,  // collision shape of body
+        btVector3(0, 0, 0)  // local inertia
+    );
+    btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+
+    rigidbodies.push_back(rigidBody);
+    m_dynamicsWorld->addRigidBody(rigidBody);
+
+    rigidBody->setUserPointer((CubeStruct*)&cubes.at(i));
+  }
+
   handler.bindScaleCommands(cubes);
 
   glm::vec4 colors{0.15f, 1.0f, 1.0f, 1.0f};
@@ -168,14 +202,21 @@ void Application::run() {
     glm::vec3 origin;
     glm::vec3 direction;
     OBBIntersection::screenPosToWorldRay(m_view, m_projection, origin, direction);
+    glm::vec3 end = origin + direction * 1000.0f;
+    btCollisionWorld::ClosestRayResultCallback RayCallback(
+        btVector3(origin.x, origin.y, origin.z), btVector3(end.x, end.y, end.z));
+    // TODO: investigate why end/origin need to be switched here to get the first ray
+    m_dynamicsWorld->rayTest(btVector3(end.x, end.y, end.z),
+                             btVector3(origin.x, origin.y, origin.z), RayCallback);
+    // std::cout << glm::to_string(end) << std::endl;
+    if (RayCallback.hasHit()) {
+      CubeStruct* p = (CubeStruct*)RayCallback.m_collisionObject->getUserPointer();
+      p->cube.setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+      // std::cout << "Ray collides with cube: " << std::endl;
+    } else {
+      // std::cout << "No collision" << std::endl;
+    }
     for (CubeStruct& cubeStruct : cubes) {
-      float intersectionDistance = 0.0f;
-      if (OBBIntersection::isIntersection(
-              origin, direction, glm::vec3{-1.0f, -1.0f, -1.0f},
-              glm::vec3{1.0f, 1.0f, 1.0f}, cubeStruct.cube.getModel(),
-              intersectionDistance)) {
-        cubeStruct.cube.setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-      }
       cubeStruct.cube.draw();
     }
 
@@ -237,7 +278,7 @@ void Application::logicUpdate(TimePointTimer& logicTimer, std::vector<CubeStruct
 
     for (CubeStruct& cubeStruct : cubes) {
       cubeStruct.cube.setColor(colors);
-      cubeStruct.cube.rotate(cubeStruct.rotation);
+      // cubeStruct.cube.rotate(cubeStruct.rotation);
     }
   }
 }
@@ -246,6 +287,29 @@ void Application::initInternal() {
   this->initGL();
   this->initShaders();
   this->initTextures();
+  this->initBullet();
+}
+
+void Application::initBullet() {
+  // Initialize Bullet. This strictly follows
+  // http://bulletphysics.org/mediawiki-1.5.8/index.php/Hello_World, even though we won't
+  // use most of this stuff.
+
+  // Build the broadphase
+  btBroadphaseInterface* broadphase = new btDbvtBroadphase();
+
+  // Set up the collision configuration and dispatcher
+  btDefaultCollisionConfiguration* collisionConfiguration =
+      new btDefaultCollisionConfiguration();
+  btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
+
+  // The actual physics solver
+  btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
+
+  // The world.
+  m_dynamicsWorld =
+      new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+  m_dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
 }
 
 void Application::initGL() {

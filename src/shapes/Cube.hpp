@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <vector>
 #include "vao.hpp"
 #include "vbo.hpp"
@@ -120,6 +121,10 @@ class Cube {
   void setColor(const glm::vec4& color) { m_color = color; }
   void rotate(const float radians) {
     m_model = glm::rotate(m_model, glm::radians(radians), glm::vec3(0.5f, 1.0f, 0.0f));
+  }
+  void setRotation(glm::quat quat) {
+    glm::mat4 rotation = glm::toMat4(quat);
+    m_model = m_model * rotation;
   }
   void setScale(const float scale) {
     this->resetScale();

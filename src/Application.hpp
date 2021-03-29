@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <btBulletDynamicsCommon.h>
 
 #include <vector>
 #include <unordered_map>
@@ -56,6 +57,7 @@ class Application {
   void initTextures();
   void initGL();
   void initInternal();
+  void initBullet();
   void updateShaderCamera();
   void logicUpdate(TimePointTimer& timer, std::vector<CubeStruct>& cubes,
                    glm::vec4& colors, float& increment);
@@ -73,6 +75,7 @@ class Application {
   std::unordered_map<std::string, Texture> m_Textures;
   glm::mat4 m_projection{1.0f};
   glm::mat4 m_view{1.0f};
+  btDiscreteDynamicsWorld* m_dynamicsWorld = nullptr;
 };
 
 #endif
