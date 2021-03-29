@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
-
 set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(RES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/res)
@@ -23,6 +22,7 @@ set(SOURCES
   ${SRC_DIR}/vbo.cpp
   ${SRC_DIR}/Texture.cpp
   ${SRC_DIR}/vbLayout.cpp
+  ${SRC_DIR}/OBBIntersection.cpp
 )
 
 set(HEADERS 
@@ -38,6 +38,7 @@ set(HEADERS
   ${SRC_DIR}/Camera.hpp
   ${SRC_DIR}/Timer.hpp
   ${SRC_DIR}/vbLayout.hpp
+  ${SRC_DIR}/OBBIntersection.hpp
 )
 
 # adding executable, changing executable suffix for windows
@@ -84,6 +85,35 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${GLM_DIR})
 ## stb_image (image library)
 set(STB_DIR ${LIB_DIR}/stb)
 target_include_directories(${PROJECT_NAME} PRIVATE ${STB_DIR})
+
+set(BULLET_DIR "${LIB_DIR}/bullet")
+# set(USE_GLUT:BOOL OFF)
+# set(BUILD_EXTRAS:BOOL OFF)
+# set(BUILD_CPU_DEMOS:BOOL OFF)
+# set(BUILD_OPENGL3_DEMOS:BOOL OFF)
+# set(BUILD_BULLET2_DEMOS:BOOL OFF)
+# set(BUILD_UNIT_TESTS:BOOL OFF)
+# set(INSTALL_EXTRA_LIBS:BOOL OFF)
+# set(INSTALL_LIBS:BOOL ON)
+# set(PKGCONFIG_INSTALL_PREFIX "lib/pkgconfig/" CACHE STRING)
+add_compile_options(
+  -DUSE_GLUT=OFF
+  -DBUILD_EXTRAS=OFF
+  -DBUILD_CPU_DEMOS=OFF
+  -DBUILD_OPENGL3_DEMOS=OFF
+  -DBUILD_BULLET2_DEMOS=OFF
+  -DBUILD_UNIT_TESTS=OFF
+  -DINSTALL_EXTRA_LIBS=OFF
+)
+add_subdirectory(${BULLET_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE "${BULLET_DIR}/src") 
+# include_directories("${BULLET_DIR}/src") 
+# message(STATUS "${BULLET_INCLUDE_DIR}")
+target_link_libraries(${PROJECT_NAME} 
+  "BulletDynamics"
+  "BulletCollision"
+  "LinearMath"
+)
 
 ## copying shaders/textures into build directory
 file(COPY ${RES_DIR} DESTINATION .)

@@ -71,6 +71,8 @@ class Application {
   std::unordered_map<std::string, Shader> m_shaders;
   std::unordered_map<std::string, Shader> m_cameraIndependentShaders;
   std::unordered_map<std::string, Texture> m_Textures;
+  glm::mat4 m_projection{1.0f};
+  glm::mat4 m_view{1.0f};
 };
 
 #endif

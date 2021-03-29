@@ -20,7 +20,6 @@ class CubeAttributes {
   }
   CubeAttributes(CubeAttributes const&) = delete;
   void operator=(CubeAttributes const&) = delete;
-  // float* positions;
   std::vector<float> positions;
   unsigned int* indices;
   VertexArrayObject vao{};
@@ -29,49 +28,6 @@ class CubeAttributes {
 
  private:
   CubeAttributes() {
-    // positions = new float[180]{
-    //     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  //
-    //     0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,  //
-    //     0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,  //
-    //     0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,  //
-    //     -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f,  //
-    //     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  //
-
-    //     -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,  //
-    //     0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,  //
-    //     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  //
-    //     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  //
-    //     -0.5f, 0.5f,  0.5f,  0.0f, 1.0f,  //
-    //     -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,  //
-
-    //     -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,  //
-    //     -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f,  //
-    //     -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  //
-    //     -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  //
-    //     -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,  //
-    //     -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,  //
-
-    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  //
-    //     0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,  //
-    //     0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,  //
-    //     0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,  //
-    //     0.5f,  -0.5f, 0.5f,  0.0f, 0.0f,  //
-    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  //
-
-    //     -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  //
-    //     0.5f,  -0.5f, -0.5f, 1.0f, 1.0f,  //
-    //     0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,  //
-    //     0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,  //
-    //     -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,  //
-    //     -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  //
-
-    //     -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f,  //
-    //     0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,  //
-    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  //
-    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  //
-    //     -0.5f, 0.5f,  0.5f,  0.0f, 0.0f,  //
-    //     -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f   //
-    // };
     positions = {
         -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  //
         0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,  //
@@ -115,7 +71,6 @@ class CubeAttributes {
         -0.5f, 0.5f,  0.5f,  0.0f, 0.0f,  //
         -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f   //
     };
-    // vbo.setAttributes(0, sizeof(float) * 180, positions);
     vbo.setData(positions);
 
     VertexBufferLayout layout{};
@@ -182,6 +137,8 @@ class Cube {
   void movePosition(glm::vec3 position) { m_model = glm::translate(m_model, position); }
 
   void setEnableGradient(bool enable) { m_enableBlueGradient = enable ? 1.0f : 0.0f; }
+
+  const glm::mat4& getModel() const { return m_model; }
 
   ~Cube() = default;
 

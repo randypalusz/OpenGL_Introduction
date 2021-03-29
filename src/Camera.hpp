@@ -50,6 +50,9 @@ class Camera {
                        m_attributes.up);
   }
 
+  const glm::vec3& getPosition() const { return m_attributes.position; }
+  const glm::vec3& getFront() const { return m_attributes.front; }
+
   float getZoom() { return m_attributes.zoom; }
 
   void keyMovement(Movement direction, float deltaTime) {

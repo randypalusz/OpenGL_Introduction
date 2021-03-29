@@ -1,6 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <btBulletDynamicsCommon.h>
 
 #include <stdio.h>
 #include <iostream>
@@ -19,6 +21,7 @@
 #include "Camera.hpp"
 #include "Timer.hpp"
 #include "shapes/Crosshair.hpp"
+#include "OBBIntersection.hpp"
 
 auto Application::initApp() -> int {
   int glfwInitRes = glfwInit();
@@ -119,7 +122,7 @@ void Application::run() {
   for (CubeStruct& cubeStruct : cubes) {
     cubeStruct.cube.movePosition(cubeStruct.position);
     cubeStruct.cube.setEnableGradient(true);
-    cubeStruct.cube.setScale(0.8f);
+    // cubeStruct.cube.setScale(0.8f);
   }
 
   handler.bindScaleCommands(cubes);
@@ -162,7 +165,17 @@ void Application::run() {
     updateShaderCamera();
 
     // draw cubes
+    glm::vec3 origin;
+    glm::vec3 direction;
+    OBBIntersection::screenPosToWorldRay(m_view, m_projection, origin, direction);
     for (CubeStruct& cubeStruct : cubes) {
+      float intersectionDistance = 0.0f;
+      if (OBBIntersection::isIntersection(
+              origin, direction, glm::vec3{-1.0f, -1.0f, -1.0f},
+              glm::vec3{1.0f, 1.0f, 1.0f}, cubeStruct.cube.getModel(),
+              intersectionDistance)) {
+        cubeStruct.cube.setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+      }
       cubeStruct.cube.draw();
     }
 
@@ -200,13 +213,12 @@ void Application::mouseCallback(double xpos, double ypos) {
 void Application::updateShaderCamera() {
   for (auto it = m_shaders.begin(); it != m_shaders.end(); it++) {
     Shader& currentShader = it->second;
-    glm::mat4 projection =
-        glm::perspective(glm::radians(m_camera->getZoom()),
-                         (float)m_width / (float)m_height, 0.1f, 100.0f);
+    m_projection = glm::perspective(glm::radians(m_camera->getZoom()),
+                                    (float)m_width / (float)m_height, 0.1f, 100.0f);
+    m_view = m_camera->getViewMatrix();
 
-    glm::mat4 view = m_camera->getViewMatrix();
-    currentShader.setUniform("u_projection", projection);
-    currentShader.setUniform("u_view", view);
+    currentShader.setUniform("u_projection", m_projection);
+    currentShader.setUniform("u_view", m_view);
   }
 }
 
