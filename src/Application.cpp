@@ -106,7 +106,7 @@ void Application::run() {
 
   InputHandler handler{m_window, m_camera};
 
-  Cube cube{m_window, &m_shaders.at("Cube"), &m_Textures.at("Cube")};
+  Cube cube{&m_shaders.at("Cube"), &m_Textures.at("Cube")};
 
   std::vector<CubeStruct> cubes{{glm::vec3(0.0f, 0.0f, -3.0f), cube, 0.05f},
                                 {glm::vec3(2.0f, 5.0f, -15.0f), cube, 0.6f},
@@ -125,7 +125,6 @@ void Application::run() {
     // cubeStruct.cube.setScale(0.8f);
   }
 
-  // TODO: this is a hack - ensure that position move is done first, then set rotation
   // TODO: move rigid body information into cube class
   std::vector<glm::quat> rotations;
   std::vector<btRigidBody*> rigidbodies;
@@ -208,13 +207,10 @@ void Application::run() {
     // TODO: investigate why end/origin need to be switched here to get the first ray
     m_dynamicsWorld->rayTest(btVector3(end.x, end.y, end.z),
                              btVector3(origin.x, origin.y, origin.z), RayCallback);
-    // std::cout << glm::to_string(end) << std::endl;
     if (RayCallback.hasHit()) {
       CubeStruct* p = (CubeStruct*)RayCallback.m_collisionObject->getUserPointer();
       p->cube.setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-      // std::cout << "Ray collides with cube: " << std::endl;
     } else {
-      // std::cout << "No collision" << std::endl;
     }
     for (CubeStruct& cubeStruct : cubes) {
       cubeStruct.cube.draw();

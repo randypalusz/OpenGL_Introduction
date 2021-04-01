@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <btBulletDynamicsCommon.h>
 #include <algorithm>
 #include <vector>
 #include "vao.hpp"
@@ -85,8 +86,7 @@ class CubeAttributes {
 
 class Cube {
  public:
-  Cube(GLFWwindow* window, Shader* shader, Texture* texture) {
-    glfwGetWindowSize(window, &m_windowWidth, &m_windowHeight);
+  Cube(Shader* shader, Texture* texture) {
     m_texture = texture;
     m_shader = shader;
   }
@@ -172,8 +172,6 @@ class Cube {
   VertexArrayObject& m_vao = attributes.vao;
   Texture* m_texture;
   Shader* m_shader;
-  int m_windowWidth;
-  int m_windowHeight;
   float m_scaleValue = 1.0f;
   glm::vec4 m_color{1.0f, 1.0f, 1.0f, 1.0f};
   glm::mat4 m_model = glm::mat4(1.0f);
