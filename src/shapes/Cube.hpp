@@ -161,7 +161,7 @@ class Cube {
     m_scaleMat = glm::scale(
         m_scaleMat, glm::vec3(1 / m_scaleValue, 1 / m_scaleValue, 1 / m_scaleValue));
   }
-  inline void setModel() { m_model = m_scaleMat * m_translateMat * m_rotateMat; }
+  inline void setModel() { m_model = m_translateMat * m_rotateMat * m_scaleMat; }
   CubeAttributes& attributes = CubeAttributes::get();
   // vertex buffer contains information about each vertex
   VertexBufferObject& m_vbo = attributes.vbo;
