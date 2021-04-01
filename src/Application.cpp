@@ -278,7 +278,7 @@ void Application::logicUpdate(TimePointTimer& logicTimer, std::vector<CubeStruct
 
     for (CubeStruct& cubeStruct : cubes) {
       cubeStruct.cube.setColor(colors);
-      // cubeStruct.cube.rotate(cubeStruct.rotation);
+      cubeStruct.cube.rotate(cubeStruct.rotation);
     }
   }
 }

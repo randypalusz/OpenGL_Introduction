@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <algorithm>
 #include <vector>
 #include "vao.hpp"
 #include "vbo.hpp"
@@ -90,7 +91,7 @@ class Cube {
     m_shader = shader;
   }
 
-  void draw() const {
+  void draw() {
     // enable correct shaders
     m_shader->use();
 
@@ -99,6 +100,9 @@ class Cube {
 
     // set gradient uniform for active shader
     m_shader->setUniform("u_enableBlueGradient", m_enableBlueGradient);
+
+    // update model matrix;
+    this->setModel();
 
     // set model matrix
     m_shader->setUniform("u_model", m_model);
@@ -119,27 +123,32 @@ class Cube {
   }
 
   void setColor(const glm::vec4& color) { m_color = color; }
-  void rotate(const float radians) {
-    m_model = glm::rotate(m_model, glm::radians(radians), glm::vec3(0.5f, 1.0f, 0.0f));
+  void rotate(const float degrees) {
+    m_rotateMat = m_rotateMat * glm::toMat4(glm::angleAxis(glm::radians(degrees),
+                                                           glm::vec3(0.5f, 1.0f, 0.0f)));
   }
   void setRotation(glm::quat quat) {
     glm::mat4 rotation = glm::toMat4(quat);
-    m_model = m_model * rotation;
+    m_rotateMat = m_rotateMat * rotation;
   }
   void setScale(const float scale) {
     this->resetScale();
-    m_scale = scale;
-    m_scale = std::clamp(m_scale, 0.2f, 10.0f);
-    m_model = glm::scale(m_model, glm::vec3(m_scale, m_scale, m_scale));
+    m_scaleValue = scale;
+    m_scaleValue = std::clamp(m_scaleValue, 0.2f, 10.0f);
+    m_scaleMat =
+        glm::scale(m_scaleMat, glm::vec3(m_scaleValue, m_scaleValue, m_scaleValue));
   }
   void adjustScale(const float scaleAdjustment) {
     this->resetScale();
     float scaleFactor = 1.0f + scaleAdjustment;
-    m_scale = m_scale * scaleFactor;
-    m_scale = std::clamp(m_scale, 0.2f, 10.0f);
-    m_model = glm::scale(m_model, glm::vec3(m_scale, m_scale, m_scale));
+    m_scaleValue = m_scaleValue * scaleFactor;
+    m_scaleValue = std::clamp(m_scaleValue, 0.2f, 10.0f);
+    m_scaleMat =
+        glm::scale(m_scaleMat, glm::vec3(m_scaleValue, m_scaleValue, m_scaleValue));
   }
-  void movePosition(glm::vec3 position) { m_model = glm::translate(m_model, position); }
+  void movePosition(glm::vec3 position) {
+    m_translateMat = glm::translate(m_translateMat, position);
+  }
 
   void setEnableGradient(bool enable) { m_enableBlueGradient = enable ? 1.0f : 0.0f; }
 
@@ -149,8 +158,10 @@ class Cube {
 
  private:
   inline void resetScale() {
-    m_model = glm::scale(m_model, glm::vec3(1 / m_scale, 1 / m_scale, 1 / m_scale));
+    m_scaleMat = glm::scale(
+        m_scaleMat, glm::vec3(1 / m_scaleValue, 1 / m_scaleValue, 1 / m_scaleValue));
   }
+  inline void setModel() { m_model = m_scaleMat * m_translateMat * m_rotateMat; }
   CubeAttributes& attributes = CubeAttributes::get();
   // vertex buffer contains information about each vertex
   VertexBufferObject& m_vbo = attributes.vbo;
@@ -163,9 +174,13 @@ class Cube {
   Shader* m_shader;
   int m_windowWidth;
   int m_windowHeight;
-  float m_scale = 1.0f;
+  float m_scaleValue = 1.0f;
   glm::vec4 m_color{1.0f, 1.0f, 1.0f, 1.0f};
   glm::mat4 m_model = glm::mat4(1.0f);
+  // these are multiplied in order top->bottom
+  glm::mat4 m_scaleMat = glm::mat4(1.0f);
+  glm::mat4 m_translateMat = glm::mat4(1.0f);
+  glm::mat4 m_rotateMat = glm::mat4(1.0f);
   float m_enableBlueGradient = 0.0f;
 };
 #endif
