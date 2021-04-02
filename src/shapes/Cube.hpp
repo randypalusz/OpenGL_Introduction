@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <btBulletDynamicsCommon.h>
 #include <algorithm>
 #include <vector>
@@ -86,9 +87,11 @@ class CubeAttributes {
 
 class Cube {
  public:
-  Cube(Shader* shader, Texture* texture) {
+  Cube(Shader* shader, Texture* texture, btDynamicsWorld* dw) {
     m_texture = texture;
     m_shader = shader;
+    m_dynamicsWorld = dw;
+    this->initBullet();
   }
 
   void draw() {
@@ -152,6 +155,8 @@ class Cube {
 
   void setEnableGradient(bool enable) { m_enableBlueGradient = enable ? 1.0f : 0.0f; }
 
+  btRigidBody* getRigidBody() { return m_rigidBody; }
+
   const glm::mat4& getModel() const { return m_model; }
 
   ~Cube() = default;
@@ -161,7 +166,24 @@ class Cube {
     m_scaleMat = glm::scale(
         m_scaleMat, glm::vec3(1 / m_scaleValue, 1 / m_scaleValue, 1 / m_scaleValue));
   }
-  inline void setModel() { m_model = m_translateMat * m_rotateMat * m_scaleMat; }
+  inline void setModel() {
+    m_model = m_translateMat * m_rotateMat * m_scaleMat;
+    btTransform transform = m_rigidBody->getWorldTransform();
+    transform.setFromOpenGLMatrix(glm::value_ptr(m_model));
+    m_rigidBody->setWorldTransform(transform);
+    // TODO: this is unnecessary to call every frame
+    m_dynamicsWorld->updateSingleAabb(m_rigidBody);
+  }
+  void initBullet() {
+    btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
+        0,  // mass, in kg. 0 -> Static object, will never move.
+        m_motionState,
+        m_boxCollisionShape,  // collision shape of body
+        btVector3(0, 0, 0)    // local inertia
+    );
+    m_rigidBody = new btRigidBody(rigidBodyCI);
+    m_dynamicsWorld->addRigidBody(m_rigidBody);
+  }
   CubeAttributes& attributes = CubeAttributes::get();
   // vertex buffer contains information about each vertex
   VertexBufferObject& m_vbo = attributes.vbo;
@@ -180,5 +202,11 @@ class Cube {
   glm::mat4 m_translateMat = glm::mat4(1.0f);
   glm::mat4 m_rotateMat = glm::mat4(1.0f);
   float m_enableBlueGradient = 0.0f;
+
+  // bullet fields
+  btDynamicsWorld* m_dynamicsWorld = nullptr;
+  btCollisionShape* m_boxCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f));
+  btDefaultMotionState* m_motionState = new btDefaultMotionState();
+  btRigidBody* m_rigidBody = nullptr;
 };
 #endif

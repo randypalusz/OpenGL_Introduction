@@ -106,56 +106,27 @@ void Application::run() {
 
   InputHandler handler{m_window, m_camera};
 
-  Cube cube{&m_shaders.at("Cube"), &m_Textures.at("Cube")};
-
-  std::vector<CubeStruct> cubes{{glm::vec3(0.0f, 0.0f, -3.0f), cube, 0.05f},
-                                {glm::vec3(2.0f, 5.0f, -15.0f), cube, 0.6f},
-                                {glm::vec3(-1.5f, -2.2f, -2.5f), cube, 0.8f},
-                                {glm::vec3(-3.8f, -2.0f, -12.3f), cube, 0.1f},
-                                {glm::vec3(2.4f, -0.4f, -3.5f), cube, 0.3f},
-                                {glm::vec3(-1.7f, 3.0f, -7.5f), cube, 0.2f},
-                                {glm::vec3(1.3f, -2.0f, -2.5f), cube, 0.16f},
-                                {glm::vec3(1.5f, 2.0f, -2.5f), cube, 0.32f},
-                                {glm::vec3(1.5f, 0.2f, -1.5f), cube, 0.23f},
-                                {glm::vec3(-1.3f, 1.0f, -1.5f), cube, 0.02f}};
+  std::vector<glm::vec3> cubePositions{
+      glm::vec3(0.0f, 0.0f, -3.0f),   glm::vec3(2.0f, 5.0f, -15.0f),
+      glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
+      glm::vec3(2.4f, -0.4f, -3.5f),  glm::vec3(-1.7f, 3.0f, -7.5f),
+      glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
+      glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
+  std::vector<float> cubeRotations{0.05f, 0.6f,  0.8f,  0.1f,  0.3f,
+                                   0.2f,  0.16f, 0.32f, 0.23f, 0.02f};
+  std::vector<CubeStruct> cubes;
+  for (int i = 0; i < 10; i++) {
+    cubes.push_back({cubePositions.at(i),
+                     Cube{&m_shaders.at("Cube"), &m_Textures.at("Cube"), m_dynamicsWorld},
+                     cubeRotations.at(i)});
+  }
 
   for (CubeStruct& cubeStruct : cubes) {
     cubeStruct.cube.movePosition(cubeStruct.position);
     cubeStruct.cube.setEnableGradient(true);
+    // TODO: this is clunky - update to be heap allocated or something
+    cubeStruct.cube.getRigidBody()->setUserPointer(&(cubeStruct.cube));
     // cubeStruct.cube.setScale(0.8f);
-  }
-
-  // TODO: move rigid body information into cube class
-  std::vector<glm::quat> rotations;
-  std::vector<btRigidBody*> rigidbodies;
-
-  // In this example, all monkeys will use the same collision shape :
-  // A box of 2m*2m*2m (1.0 is the half-extent !)
-  // TODO: make the bounding box dynamic according to the shape/size
-  btCollisionShape* boxCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f));
-  for (int i = 0; i < 10; i++) {
-    rotations.push_back(
-        glm::normalize(glm::quat(glm::vec3(rand() % 360, rand() % 360, rand() % 360))));
-    CubeStruct& cube = cubes.at(i);
-    cube.cube.setRotation(rotations.at(i));
-
-    btDefaultMotionState* motionstate = new btDefaultMotionState(
-        btTransform(btQuaternion(rotations.at(i).x, rotations.at(i).y, rotations.at(i).z,
-                                 rotations.at(i).w),
-                    btVector3(cube.position.x, cube.position.y, cube.position.z)));
-
-    btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
-        0,  // mass, in kg. 0 -> Static object, will never move.
-        motionstate,
-        boxCollisionShape,  // collision shape of body
-        btVector3(0, 0, 0)  // local inertia
-    );
-    btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
-
-    rigidbodies.push_back(rigidBody);
-    m_dynamicsWorld->addRigidBody(rigidBody);
-
-    rigidBody->setUserPointer((CubeStruct*)&cubes.at(i));
   }
 
   handler.bindScaleCommands(cubes);
@@ -208,8 +179,9 @@ void Application::run() {
     m_dynamicsWorld->rayTest(btVector3(end.x, end.y, end.z),
                              btVector3(origin.x, origin.y, origin.z), RayCallback);
     if (RayCallback.hasHit()) {
-      CubeStruct* p = (CubeStruct*)RayCallback.m_collisionObject->getUserPointer();
-      p->cube.setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+      // TODO: make this a <GameObject>* in the future
+      Cube* cube = (Cube*)RayCallback.m_collisionObject->getUserPointer();
+      cube->setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
     } else {
     }
     for (CubeStruct& cubeStruct : cubes) {
