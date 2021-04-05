@@ -127,14 +127,17 @@ class Cube {
 
   void setColor(const glm::vec4& color) { m_color = color; }
   void rotate(const float degrees) {
+    m_updateModel = true;
     m_rotateMat = m_rotateMat * glm::toMat4(glm::angleAxis(glm::radians(degrees),
                                                            glm::vec3(0.5f, 1.0f, 0.0f)));
   }
   void setRotation(glm::quat quat) {
+    m_updateModel = true;
     glm::mat4 rotation = glm::toMat4(quat);
     m_rotateMat = m_rotateMat * rotation;
   }
   void setScale(const float scale) {
+    m_updateModel = true;
     this->resetScale();
     m_scaleValue = scale;
     m_scaleValue = std::clamp(m_scaleValue, 0.2f, 10.0f);
@@ -142,6 +145,7 @@ class Cube {
         glm::scale(m_scaleMat, glm::vec3(m_scaleValue, m_scaleValue, m_scaleValue));
   }
   void adjustScale(const float scaleAdjustment) {
+    m_updateModel = true;
     this->resetScale();
     float scaleFactor = 1.0f + scaleAdjustment;
     m_scaleValue = m_scaleValue * scaleFactor;
@@ -150,6 +154,7 @@ class Cube {
         glm::scale(m_scaleMat, glm::vec3(m_scaleValue, m_scaleValue, m_scaleValue));
   }
   void movePosition(glm::vec3 position) {
+    m_updateModel = true;
     m_translateMat = glm::translate(m_translateMat, position);
   }
 
@@ -167,12 +172,14 @@ class Cube {
         m_scaleMat, glm::vec3(1 / m_scaleValue, 1 / m_scaleValue, 1 / m_scaleValue));
   }
   inline void setModel() {
-    m_model = m_translateMat * m_rotateMat * m_scaleMat;
-    btTransform transform = m_rigidBody->getWorldTransform();
-    transform.setFromOpenGLMatrix(glm::value_ptr(m_model));
-    m_rigidBody->setWorldTransform(transform);
-    // TODO: this is unnecessary to call every frame
-    m_dynamicsWorld->updateSingleAabb(m_rigidBody);
+    if (m_updateModel) {
+      m_model = m_translateMat * m_rotateMat * m_scaleMat;
+      btTransform transform = m_rigidBody->getWorldTransform();
+      transform.setFromOpenGLMatrix(glm::value_ptr(m_model));
+      m_rigidBody->setWorldTransform(transform);
+      m_dynamicsWorld->updateSingleAabb(m_rigidBody);
+      m_updateModel = false;
+    }
   }
   void initBullet() {
     btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
@@ -208,5 +215,7 @@ class Cube {
   btCollisionShape* m_boxCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f));
   btDefaultMotionState* m_motionState = new btDefaultMotionState();
   btRigidBody* m_rigidBody = nullptr;
+  // TODO: find a more elegant way of setting this
+  bool m_updateModel = true;
 };
 #endif
