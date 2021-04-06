@@ -105,7 +105,6 @@ class Crosshair {
   int m_windowWidth;
   int m_windowHeight;
   glm::vec4 m_color{1.0f, 1.0f, 1.0f, 1.0f};
-  glm::mat4 m_projection = glm::mat4(1.0f);
   glm::mat4 m_model = glm::mat4(1.0f);
 };
 
