@@ -86,34 +86,28 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${GLM_DIR})
 set(STB_DIR ${LIB_DIR}/stb)
 target_include_directories(${PROJECT_NAME} PRIVATE ${STB_DIR})
 
-set(BULLET_DIR "${LIB_DIR}/bullet")
-# set(USE_GLUT:BOOL OFF)
-# set(BUILD_EXTRAS:BOOL OFF)
-# set(BUILD_CPU_DEMOS:BOOL OFF)
-# set(BUILD_OPENGL3_DEMOS:BOOL OFF)
-# set(BUILD_BULLET2_DEMOS:BOOL OFF)
-# set(BUILD_UNIT_TESTS:BOOL OFF)
-# set(INSTALL_EXTRA_LIBS:BOOL OFF)
-# set(INSTALL_LIBS:BOOL ON)
-# set(PKGCONFIG_INSTALL_PREFIX "lib/pkgconfig/" CACHE STRING)
-add_compile_options(
-  -DUSE_GLUT=OFF
-  -DBUILD_EXTRAS=OFF
-  -DBUILD_CPU_DEMOS=OFF
-  -DBUILD_OPENGL3_DEMOS=OFF
-  -DBUILD_BULLET2_DEMOS=OFF
-  -DBUILD_UNIT_TESTS=OFF
-  -DINSTALL_EXTRA_LIBS=OFF
-)
-add_subdirectory(${BULLET_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE "${BULLET_DIR}/src") 
-# include_directories("${BULLET_DIR}/src") 
-# message(STATUS "${BULLET_INCLUDE_DIR}")
-target_link_libraries(${PROJECT_NAME} 
-  "BulletDynamics"
-  "BulletCollision"
-  "LinearMath"
-)
+# set(BULLET_DIR "${LIB_DIR}/bullet")
+# add_compile_options(
+#   -DUSE_GLUT=OFF
+#   -DBUILD_EXTRAS=OFF
+#   -DBUILD_CPU_DEMOS=OFF
+#   -DBUILD_OPENGL3_DEMOS=OFF
+#   -DBUILD_BULLET2_DEMOS=OFF
+#   -DBUILD_UNIT_TESTS=OFF
+#   -DINSTALL_EXTRA_LIBS=OFF
+# )
+# add_subdirectory(${BULLET_DIR})
+# target_include_directories(${PROJECT_NAME} PRIVATE "${BULLET_DIR}/src") 
+# target_link_libraries(${PROJECT_NAME} 
+#   "BulletDynamics"
+#   "BulletCollision"
+#   "LinearMath"
+# )
+
+set(REACT_DIR "${LIB_DIR}/react")
+add_subdirectory(${REACT_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE "${REACT_DIR}/include") 
+target_link_libraries(${PROJECT_NAME} "reactphysics3d")
 
 ## copying shaders/textures into build directory
 file(COPY ${RES_DIR} DESTINATION .)

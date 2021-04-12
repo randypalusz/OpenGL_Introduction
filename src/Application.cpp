@@ -2,7 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include <btBulletDynamicsCommon.h>
+// #include <btBulletDynamicsCommon.h>
+#include <reactphysics3d/reactphysics3d.h>
 
 #include <stdio.h>
 #include <iostream>
@@ -116,16 +117,17 @@ void Application::run() {
                                    0.2f,  0.16f, 0.32f, 0.23f, 0.02f};
   std::vector<CubeStruct> cubes;
   for (int i = 0; i < 10; i++) {
-    cubes.push_back({cubePositions.at(i),
-                     Cube{&m_shaders.at("Cube"), &m_Textures.at("Cube"), m_dynamicsWorld},
-                     cubeRotations.at(i)});
+    cubes.push_back(
+        {cubePositions.at(i),
+         Cube{&m_shaders.at("Cube"), &m_Textures.at("Cube") /*, /m_dynamicsWorld*/},
+         cubeRotations.at(i)});
   }
 
   for (CubeStruct& cubeStruct : cubes) {
     cubeStruct.cube.movePosition(cubeStruct.position);
     cubeStruct.cube.setEnableGradient(true);
     // TODO: this is clunky - update to be heap allocated or something
-    cubeStruct.cube.getRigidBody()->setUserPointer(&(cubeStruct.cube));
+    // cubeStruct.cube.getRigidBody()->setUserPointer(&(cubeStruct.cube));
     // cubeStruct.cube.setScale(0.8f);
   }
 
@@ -173,17 +175,17 @@ void Application::run() {
     glm::vec3 direction;
     OBBIntersection::screenPosToWorldRay(m_view, m_projection, origin, direction);
     glm::vec3 end = origin + direction * 1000.0f;
-    btCollisionWorld::ClosestRayResultCallback RayCallback(
-        btVector3(origin.x, origin.y, origin.z), btVector3(end.x, end.y, end.z));
+    // btCollisionWorld::ClosestRayResultCallback RayCallback(
+    //     btVector3(origin.x, origin.y, origin.z), btVector3(end.x, end.y, end.z));
     // TODO: investigate why end/origin need to be switched here to get the first ray
-    m_dynamicsWorld->rayTest(btVector3(end.x, end.y, end.z),
-                             btVector3(origin.x, origin.y, origin.z), RayCallback);
-    if (RayCallback.hasHit()) {
-      // TODO: make this a <GameObject>* in the future
-      Cube* cube = (Cube*)RayCallback.m_collisionObject->getUserPointer();
-      cube->setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-    } else {
-    }
+    // m_dynamicsWorld->rayTest(btVector3(end.x, end.y, end.z),
+    //                          btVector3(origin.x, origin.y, origin.z), RayCallback);
+    // if (RayCallback.hasHit()) {
+    //   // TODO: make this a <GameObject>* in the future
+    //   Cube* cube = (Cube*)RayCallback.m_collisionObject->getUserPointer();
+    //   cube->setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    // } else {
+    // }
     for (CubeStruct& cubeStruct : cubes) {
       cubeStruct.cube.draw();
     }
@@ -255,30 +257,36 @@ void Application::initInternal() {
   this->initGL();
   this->initShaders();
   this->initTextures();
-  this->initBullet();
+  // this->initBullet();
 }
 
-void Application::initBullet() {
-  // Initialize Bullet. This strictly follows
-  // http://bulletphysics.org/mediawiki-1.5.8/index.php/Hello_World, even though we won't
-  // use most of this stuff.
+// void Application::initBullet() {
+//   // Initialize Bullet. This strictly follows
+//   // http://bulletphysics.org/mediawiki-1.5.8/index.php/Hello_World, even though we
+//   won't
+//   // use most of this stuff.
 
-  // Build the broadphase
-  btBroadphaseInterface* broadphase = new btDbvtBroadphase();
+//   // Build the broadphase
+//   btBroadphaseInterface* broadphase = new btDbvtBroadphase();
 
-  // Set up the collision configuration and dispatcher
-  btDefaultCollisionConfiguration* collisionConfiguration =
-      new btDefaultCollisionConfiguration();
-  btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
+//   // Set up the collision configuration and dispatcher
+//   btDefaultCollisionConfiguration* collisionConfiguration =
+//       new btDefaultCollisionConfiguration();
+//   btCollisionDispatcher* dispatcher = new
+//   btCollisionDispatcher(collisionConfiguration);
 
-  // The actual physics solver
-  btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
+//   // The actual physics solver
+//   btSequentialImpulseConstraintSolver* solver = new
+//   btSequentialImpulseConstraintSolver;
 
-  // The world.
-  m_dynamicsWorld =
-      new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-  m_dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
-}
+//   // The world.
+//   m_dynamicsWorld =
+//       new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,
+//       collisionConfiguration);
+//   m_dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
+// }
+
+void Application::initReact() { m_physicsWorld = m_physicsCommon.createPhysicsWorld(); }
 
 void Application::initGL() {
 #ifdef _WIN32

@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <btBulletDynamicsCommon.h>
+// #include <btBulletDynamicsCommon.h>
 #include <algorithm>
 #include <vector>
 #include "vao.hpp"
@@ -87,11 +87,11 @@ class CubeAttributes {
 
 class Cube {
  public:
-  Cube(Shader* shader, Texture* texture, btDynamicsWorld* dw) {
+  Cube(Shader* shader, Texture* texture /*, btDynamicsWorld* dw*/) {
     m_texture = texture;
     m_shader = shader;
-    m_dynamicsWorld = dw;
-    this->initBullet();
+    // m_dynamicsWorld = dw;
+    // this->initBullet();
   }
 
   void draw() {
@@ -160,7 +160,7 @@ class Cube {
 
   void setEnableGradient(bool enable) { m_enableBlueGradient = enable ? 1.0f : 0.0f; }
 
-  btRigidBody* getRigidBody() { return m_rigidBody; }
+  // btRigidBody* getRigidBody() { return m_rigidBody; }
 
   const glm::mat4& getModel() const { return m_model; }
 
@@ -174,22 +174,22 @@ class Cube {
   inline void setModel() {
     if (m_updateModel) {
       m_model = m_translateMat * m_rotateMat * m_scaleMat;
-      btTransform transform = m_rigidBody->getWorldTransform();
-      transform.setFromOpenGLMatrix(glm::value_ptr(m_model));
-      m_rigidBody->setWorldTransform(transform);
-      m_dynamicsWorld->updateSingleAabb(m_rigidBody);
+      // btTransform transform = m_rigidBody->getWorldTransform();
+      // transform.setFromOpenGLMatrix(glm::value_ptr(m_model));
+      // m_rigidBody->setWorldTransform(transform);
+      // m_dynamicsWorld->updateSingleAabb(m_rigidBody);
       m_updateModel = false;
     }
   }
   void initBullet() {
-    btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
-        0,  // mass, in kg. 0 -> Static object, will never move.
-        m_motionState,
-        m_boxCollisionShape,  // collision shape of body
-        btVector3(0, 0, 0)    // local inertia
-    );
-    m_rigidBody = new btRigidBody(rigidBodyCI);
-    m_dynamicsWorld->addRigidBody(m_rigidBody);
+    // btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
+    //     0,  // mass, in kg. 0 -> Static object, will never move.
+    //     m_motionState,
+    //     m_boxCollisionShape,  // collision shape of body
+    //     btVector3(0, 0, 0)    // local inertia
+    // );
+    // m_rigidBody = new btRigidBody(rigidBodyCI);
+    // m_dynamicsWorld->addRigidBody(m_rigidBody);
   }
   CubeAttributes& attributes = CubeAttributes::get();
   // vertex buffer contains information about each vertex
@@ -211,10 +211,10 @@ class Cube {
   float m_enableBlueGradient = 0.0f;
 
   // bullet fields
-  btDynamicsWorld* m_dynamicsWorld = nullptr;
-  btCollisionShape* m_boxCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f));
-  btDefaultMotionState* m_motionState = new btDefaultMotionState();
-  btRigidBody* m_rigidBody = nullptr;
+  // btDynamicsWorld* m_dynamicsWorld = nullptr;
+  // btCollisionShape* m_boxCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f));
+  // btDefaultMotionState* m_motionState = new btDefaultMotionState();
+  // btRigidBody* m_rigidBody = nullptr;
   // TODO: find a more elegant way of setting this
   bool m_updateModel = true;
 };

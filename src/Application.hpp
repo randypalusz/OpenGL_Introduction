@@ -4,7 +4,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <btBulletDynamicsCommon.h>
+// #include <btBulletDynamicsCommon.h>
+#include <reactphysics3d/reactphysics3d.h>
 
 #include <vector>
 #include <unordered_map>
@@ -57,7 +58,8 @@ class Application {
   void initTextures();
   void initGL();
   void initInternal();
-  void initBullet();
+  // void initBullet();
+  void initReact();
   void updateShaderCamera();
   void logicUpdate(TimePointTimer& timer, std::vector<CubeStruct>& cubes,
                    glm::vec4& colors, float& increment);
@@ -75,7 +77,10 @@ class Application {
   std::unordered_map<std::string, Texture> m_Textures;
   glm::mat4 m_projection{1.0f};
   glm::mat4 m_view{1.0f};
-  btDiscreteDynamicsWorld* m_dynamicsWorld = nullptr;
+  // btDiscreteDynamicsWorld* m_dynamicsWorld = nullptr;
+  // Factory for ReactPhysics
+  reactphysics3d::PhysicsCommon m_physicsCommon;
+  reactphysics3d::PhysicsWorld* m_physicsWorld = nullptr;
 };
 
 #endif
