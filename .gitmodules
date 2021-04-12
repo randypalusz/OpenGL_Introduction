@@ -10,3 +10,6 @@
 [submodule "lib/bullet"]
 	path = lib/bullet
 	url = https://github.com/bulletphysics/bullet3
+[submodule "lib/react"]
+	path = lib/react
+	url = https://github.com/DanielChappuis/reactphysics3d
