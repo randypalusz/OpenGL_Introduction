@@ -86,24 +86,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${GLM_DIR})
 set(STB_DIR ${LIB_DIR}/stb)
 target_include_directories(${PROJECT_NAME} PRIVATE ${STB_DIR})
 
-# set(BULLET_DIR "${LIB_DIR}/bullet")
-# add_compile_options(
-#   -DUSE_GLUT=OFF
-#   -DBUILD_EXTRAS=OFF
-#   -DBUILD_CPU_DEMOS=OFF
-#   -DBUILD_OPENGL3_DEMOS=OFF
-#   -DBUILD_BULLET2_DEMOS=OFF
-#   -DBUILD_UNIT_TESTS=OFF
-#   -DINSTALL_EXTRA_LIBS=OFF
-# )
-# add_subdirectory(${BULLET_DIR})
-# target_include_directories(${PROJECT_NAME} PRIVATE "${BULLET_DIR}/src") 
-# target_link_libraries(${PROJECT_NAME} 
-#   "BulletDynamics"
-#   "BulletCollision"
-#   "LinearMath"
-# )
-
 set(REACT_DIR "${LIB_DIR}/react")
 add_subdirectory(${REACT_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE "${REACT_DIR}/include") 

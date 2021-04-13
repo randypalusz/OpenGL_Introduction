@@ -79,8 +79,9 @@ class Application {
   glm::mat4 m_view{1.0f};
   // btDiscreteDynamicsWorld* m_dynamicsWorld = nullptr;
   // Factory for ReactPhysics
-  reactphysics3d::PhysicsCommon m_physicsCommon;
-  reactphysics3d::PhysicsWorld* m_physicsWorld = nullptr;
+  PhysicsProperties physicsProperties{};
+  // reactphysics3d::PhysicsCommon m_physicsCommon;
+  // reactphysics3d::PhysicsWorld* m_physicsWorld = nullptr;
 };
 
 #endif

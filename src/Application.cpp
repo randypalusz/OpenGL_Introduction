@@ -119,7 +119,7 @@ void Application::run() {
   for (int i = 0; i < 10; i++) {
     cubes.push_back(
         {cubePositions.at(i),
-         Cube{&m_shaders.at("Cube"), &m_Textures.at("Cube") /*, /m_dynamicsWorld*/},
+         Cube{&m_shaders.at("Cube"), &m_Textures.at("Cube"), physicsProperties},
          cubeRotations.at(i)});
   }
 
@@ -258,6 +258,7 @@ void Application::initInternal() {
   this->initShaders();
   this->initTextures();
   // this->initBullet();
+  this->initReact();
 }
 
 // void Application::initBullet() {
@@ -286,7 +287,14 @@ void Application::initInternal() {
 //   m_dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
 // }
 
-void Application::initReact() { m_physicsWorld = m_physicsCommon.createPhysicsWorld(); }
+void Application::initReact() {
+  reactphysics3d::PhysicsWorld::WorldSettings settings;
+  settings.isSleepingEnabled = true;
+  settings.gravity = reactphysics3d::Vector3(0, -9.81f, 0);
+  physicsProperties.physicsCommon = new reactphysics3d::PhysicsCommon;
+  physicsProperties.physicsWorld =
+      physicsProperties.physicsCommon->createPhysicsWorld(settings);
+}
 
 void Application::initGL() {
 #ifdef _WIN32

@@ -7,6 +7,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 // #include <btBulletDynamicsCommon.h>
+#include <reactphysics3d/reactphysics3d.h>
 #include <algorithm>
 #include <vector>
 #include "vao.hpp"
@@ -87,11 +88,13 @@ class CubeAttributes {
 
 class Cube {
  public:
-  Cube(Shader* shader, Texture* texture /*, btDynamicsWorld* dw*/) {
+  Cube(Shader* shader, Texture* texture, PhysicsProperties& physicsProperties)
+      : m_physicsProperties(physicsProperties) {
     m_texture = texture;
     m_shader = shader;
     // m_dynamicsWorld = dw;
     // this->initBullet();
+    this->initReact();
   }
 
   void draw() {
@@ -191,6 +194,10 @@ class Cube {
     // m_rigidBody = new btRigidBody(rigidBodyCI);
     // m_dynamicsWorld->addRigidBody(m_rigidBody);
   }
+  void initReact() {
+    const reactphysics3d::Vector3 halfExtents(0.5f, 0.5f, 0.5f);
+    collisionShape = m_physicsProperties.physicsCommon->createBoxShape(halfExtents);
+  }
   CubeAttributes& attributes = CubeAttributes::get();
   // vertex buffer contains information about each vertex
   VertexBufferObject& m_vbo = attributes.vbo;
@@ -215,6 +222,10 @@ class Cube {
   // btCollisionShape* m_boxCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f));
   // btDefaultMotionState* m_motionState = new btDefaultMotionState();
   // btRigidBody* m_rigidBody = nullptr;
+  // reactphysics3d::PhysicsWorld* m_physicsWorld = nullptr;
+  // reactphysics3d::CollisionBody* m_collisionBody = nullptr;
+  PhysicsProperties& m_physicsProperties;
+  reactphysics3d::BoxShape* collisionShape = nullptr;
   // TODO: find a more elegant way of setting this
   bool m_updateModel = true;
 };
