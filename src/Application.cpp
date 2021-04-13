@@ -23,6 +23,7 @@
 #include "Timer.hpp"
 #include "shapes/Crosshair.hpp"
 #include "OBBIntersection.hpp"
+#include "ReactUtility.hpp"
 
 auto Application::initApp() -> int {
   int glfwInitRes = glfwInit();
@@ -107,6 +108,8 @@ void Application::run() {
 
   InputHandler handler{m_window, m_camera};
 
+  FirstRayCallback firstRayCallback;
+
   std::vector<glm::vec3> cubePositions{
       glm::vec3(0.0f, 0.0f, -3.0f),   glm::vec3(2.0f, 5.0f, -15.0f),
       glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
@@ -175,6 +178,9 @@ void Application::run() {
     glm::vec3 direction;
     OBBIntersection::screenPosToWorldRay(m_view, m_projection, origin, direction);
     glm::vec3 end = origin + direction * 1000.0f;
+    reactphysics3d::Ray ray(reactphysics3d::Vector3(origin.x, origin.y, origin.z),
+                            reactphysics3d::Vector3(end.x, end.y, end.z));
+    physicsProperties.physicsWorld->raycast(ray, &firstRayCallback);
     // btCollisionWorld::ClosestRayResultCallback RayCallback(
     //     btVector3(origin.x, origin.y, origin.z), btVector3(end.x, end.y, end.z));
     // TODO: investigate why end/origin need to be switched here to get the first ray

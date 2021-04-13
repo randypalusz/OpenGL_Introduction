@@ -178,10 +178,17 @@ class Cube {
   inline void setModel() {
     if (m_updateModel) {
       m_model = m_translateMat * m_rotateMat * m_scaleMat;
+      glm::mat4 forReact = m_translateMat * m_rotateMat;
       // btTransform transform = m_rigidBody->getWorldTransform();
       // transform.setFromOpenGLMatrix(glm::value_ptr(m_model));
       // m_rigidBody->setWorldTransform(transform);
       // m_dynamicsWorld->updateSingleAabb(m_rigidBody);
+      reactphysics3d::Transform transform;
+      transform.setFromOpenGL(glm::value_ptr(forReact));
+      m_body->setTransform(transform);
+      m_collisionShape->setHalfExtents(reactphysics3d::Vector3(
+          m_scaleValue / 2.0f, m_scaleValue / 2.0f, m_scaleValue / 2.0f));
+
       m_updateModel = false;
     }
   }
@@ -197,7 +204,13 @@ class Cube {
   }
   void initReact() {
     const reactphysics3d::Vector3 halfExtents(0.5f, 0.5f, 0.5f);
-    collisionShape = m_physicsProperties.physicsCommon->createBoxShape(halfExtents);
+    m_collisionShape = m_physicsProperties.physicsCommon->createBoxShape(halfExtents);
+    reactphysics3d::Vector3 position(0.0f, 0.0f, 0.0f);
+    reactphysics3d::Quaternion orientation = reactphysics3d::Quaternion::identity();
+    reactphysics3d::Transform transform(position, orientation);
+    m_body = m_physicsProperties.physicsWorld->createCollisionBody(transform);
+    m_collider =
+        m_body->addCollider(m_collisionShape, reactphysics3d::Transform::identity());
   }
   CubeAttributes& attributes = CubeAttributes::get();
   // vertex buffer contains information about each vertex
@@ -226,7 +239,9 @@ class Cube {
   // reactphysics3d::PhysicsWorld* m_physicsWorld = nullptr;
   // reactphysics3d::CollisionBody* m_collisionBody = nullptr;
   PhysicsProperties& m_physicsProperties;
-  reactphysics3d::BoxShape* collisionShape = nullptr;
+  reactphysics3d::BoxShape* m_collisionShape = nullptr;
+  reactphysics3d::CollisionBody* m_body = nullptr;
+  reactphysics3d::Collider* m_collider = nullptr;
   // TODO: find a more elegant way of setting this
   bool m_updateModel = true;
 };
