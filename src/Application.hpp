@@ -11,6 +11,7 @@
 #include <unordered_map>
 
 #include "GLUtility.hpp"
+#include "ReactUtility.hpp"
 #include "Shader.hpp"
 #include "Timer.hpp"
 #include "shapes/Cube.hpp"

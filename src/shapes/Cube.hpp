@@ -15,6 +15,7 @@
 #include "Texture.hpp"
 #include "Shader.hpp"
 #include "vbLayout.hpp"
+#include "ReactUtility.hpp"
 
 // Singleton that will hold common square attributes (index buffer, vbo)
 class CubeAttributes {

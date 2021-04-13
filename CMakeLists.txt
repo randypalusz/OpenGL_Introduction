@@ -23,6 +23,7 @@ set(SOURCES
   ${SRC_DIR}/Texture.cpp
   ${SRC_DIR}/vbLayout.cpp
   ${SRC_DIR}/OBBIntersection.cpp
+  ${SRC_DIR}/ReactUtility.cpp
 )
 
 set(HEADERS 
@@ -39,6 +40,7 @@ set(HEADERS
   ${SRC_DIR}/Timer.hpp
   ${SRC_DIR}/vbLayout.hpp
   ${SRC_DIR}/OBBIntersection.hpp
+  ${SRC_DIR}/ReactUtility.hpp
 )
 
 # adding executable, changing executable suffix for windows
