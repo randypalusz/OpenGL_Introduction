@@ -165,6 +165,7 @@ class Cube {
   void setEnableGradient(bool enable) { m_enableBlueGradient = enable ? 1.0f : 0.0f; }
 
   // btRigidBody* getRigidBody() { return m_rigidBody; }
+  reactphysics3d::CollisionBody* getCollisionBody() { return m_body; }
 
   const glm::mat4& getModel() const { return m_model; }
 
@@ -179,10 +180,6 @@ class Cube {
     if (m_updateModel) {
       m_model = m_translateMat * m_rotateMat * m_scaleMat;
       glm::mat4 forReact = m_translateMat * m_rotateMat;
-      // btTransform transform = m_rigidBody->getWorldTransform();
-      // transform.setFromOpenGLMatrix(glm::value_ptr(m_model));
-      // m_rigidBody->setWorldTransform(transform);
-      // m_dynamicsWorld->updateSingleAabb(m_rigidBody);
       reactphysics3d::Transform transform;
       transform.setFromOpenGL(glm::value_ptr(forReact));
       m_body->setTransform(transform);
@@ -191,16 +188,6 @@ class Cube {
 
       m_updateModel = false;
     }
-  }
-  void initBullet() {
-    // btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
-    //     0,  // mass, in kg. 0 -> Static object, will never move.
-    //     m_motionState,
-    //     m_boxCollisionShape,  // collision shape of body
-    //     btVector3(0, 0, 0)    // local inertia
-    // );
-    // m_rigidBody = new btRigidBody(rigidBodyCI);
-    // m_dynamicsWorld->addRigidBody(m_rigidBody);
   }
   void initReact() {
     const reactphysics3d::Vector3 halfExtents(0.5f, 0.5f, 0.5f);
@@ -231,13 +218,6 @@ class Cube {
   glm::mat4 m_rotateMat = glm::mat4(1.0f);
   float m_enableBlueGradient = 0.0f;
 
-  // bullet fields
-  // btDynamicsWorld* m_dynamicsWorld = nullptr;
-  // btCollisionShape* m_boxCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f));
-  // btDefaultMotionState* m_motionState = new btDefaultMotionState();
-  // btRigidBody* m_rigidBody = nullptr;
-  // reactphysics3d::PhysicsWorld* m_physicsWorld = nullptr;
-  // reactphysics3d::CollisionBody* m_collisionBody = nullptr;
   PhysicsProperties& m_physicsProperties;
   reactphysics3d::BoxShape* m_collisionShape = nullptr;
   reactphysics3d::CollisionBody* m_body = nullptr;

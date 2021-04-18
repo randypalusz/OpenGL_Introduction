@@ -14,6 +14,9 @@ class FirstRayCallback : public reactphysics3d::RaycastCallback {
  public:
   virtual reactphysics3d::decimal notifyRaycastHit(
       const reactphysics3d::RaycastInfo& info);
-  reactphysics3d::CollisionBody* lastCollided = nullptr;
+  reactphysics3d::CollisionBody* getClosestBody();
+  void resetBodies();
+  reactphysics3d::CollisionBody* closestBody = nullptr;
+  reactphysics3d::decimal closestHitFraction = reactphysics3d::decimal(1.0);
 };
 #endif
