@@ -67,7 +67,6 @@ auto Application::initApp() -> int {
 
   glfwMakeContextCurrent(window);
   // vsync toggle
-  // TODO: add input parameter to determine vsync or not
   glfwSwapInterval(m_vsync ? 1 : 0);
 
   m_window = window;
@@ -173,16 +172,7 @@ void Application::run() {
     updateShaderCamera();
 
     // draw cubes
-    glm::vec3 origin;
-    glm::vec3 direction;
-    OBBIntersection::screenPosToWorldRay(m_view, m_projection, origin, direction);
-    glm::vec3 end = origin + direction * 1000.0f;
-    reactphysics3d::Ray ray(reactphysics3d::Vector3(origin.x, origin.y, origin.z),
-                            reactphysics3d::Vector3(end.x, end.y, end.z));
-    // TODO: wrap this callback to handle resetting bodies in the future
-    firstRayCallback.resetBodies();
-    physicsProperties.physicsWorld->raycast(ray, &firstRayCallback);
-    reactphysics3d::CollisionBody* cb = firstRayCallback.getClosestBody();
+    reactphysics3d::CollisionBody* cb = this->raycast(firstRayCallback);
     if (cb != nullptr) {
       // TODO: make this a <GameObject>* in the future
       Cube* cube = (Cube*)cb->getUserData();
@@ -256,11 +246,23 @@ void Application::logicUpdate(TimePointTimer& logicTimer, std::vector<CubeStruct
   }
 }
 
+reactphysics3d::CollisionBody* Application::raycast(FirstRayCallback& callback) {
+  glm::vec3 origin;
+  glm::vec3 direction;
+  OBBIntersection::screenPosToWorldRay(m_view, m_projection, origin, direction);
+  glm::vec3 end = origin + direction * 1000.0f;
+  reactphysics3d::Ray ray(reactphysics3d::Vector3(origin.x, origin.y, origin.z),
+                          reactphysics3d::Vector3(end.x, end.y, end.z));
+  // TODO: wrap this callback to handle resetting bodies in the future
+  callback.resetBodies();
+  physicsProperties.physicsWorld->raycast(ray, &callback);
+  return callback.getClosestBody();
+}
+
 void Application::initInternal() {
   this->initGL();
   this->initShaders();
   this->initTextures();
-  // this->initBullet();
   this->initReact();
 }
 

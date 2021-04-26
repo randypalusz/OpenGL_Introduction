@@ -64,6 +64,7 @@ class Application {
   void updateShaderCamera();
   void logicUpdate(TimePointTimer& timer, std::vector<CubeStruct>& cubes,
                    glm::vec4& colors, float& increment);
+  reactphysics3d::CollisionBody* raycast(FirstRayCallback& callback);
   int m_width;
   int m_height;
   int m_majorVersion;
