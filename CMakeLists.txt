@@ -34,6 +34,7 @@ set(HEADERS
   ${SRC_DIR}/vbo.hpp
   ${SRC_DIR}/Texture.hpp
   ${SRC_DIR}/shapes/Cube.hpp
+  ${SRC_DIR}/shapes/GameObject.hpp
   ${SRC_DIR}/input/Command.hpp
   ${SRC_DIR}/input/InputHandler.hpp
   ${SRC_DIR}/Camera.hpp

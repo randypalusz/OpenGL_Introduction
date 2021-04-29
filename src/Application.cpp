@@ -16,6 +16,7 @@
 #include "vao.hpp"
 #include "vbo.hpp"
 #include "shapes/Cube.hpp"
+#include "shapes/GameObject.hpp"
 #include "input/Command.hpp"
 #include "input/InputHandler.hpp"
 #include "Camera.hpp"
@@ -175,8 +176,8 @@ void Application::run() {
     reactphysics3d::CollisionBody* cb = this->raycast(firstRayCallback);
     if (cb != nullptr) {
       // TODO: make this a <GameObject>* in the future
-      Cube* cube = (Cube*)cb->getUserData();
-      cube->setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+      GameObject* obj = (GameObject*)cb->getUserData();
+      obj->setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
     }
 
     for (CubeStruct& cubeStruct : cubes) {
@@ -253,7 +254,6 @@ reactphysics3d::CollisionBody* Application::raycast(FirstRayCallback& callback) 
   glm::vec3 end = origin + direction * 1000.0f;
   reactphysics3d::Ray ray(reactphysics3d::Vector3(origin.x, origin.y, origin.z),
                           reactphysics3d::Vector3(end.x, end.y, end.z));
-  // TODO: wrap this callback to handle resetting bodies in the future
   callback.resetBodies();
   physicsProperties.physicsWorld->raycast(ray, &callback);
   return callback.getClosestBody();

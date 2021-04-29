@@ -16,6 +16,7 @@
 #include "Shader.hpp"
 #include "vbLayout.hpp"
 #include "ReactUtility.hpp"
+#include "GameObject.hpp"
 
 // Singleton that will hold common square attributes (index buffer, vbo)
 class CubeAttributes {
@@ -87,7 +88,7 @@ class CubeAttributes {
   };
 };
 
-class Cube {
+class Cube : public GameObject {
  public:
   Cube(Shader* shader, Texture* texture, PhysicsProperties& physicsProperties)
       : m_physicsProperties(physicsProperties) {
