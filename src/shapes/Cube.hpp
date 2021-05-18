@@ -94,8 +94,6 @@ class Cube : public GameObject {
       : m_physicsProperties(physicsProperties) {
     m_texture = texture;
     m_shader = shader;
-    // m_dynamicsWorld = dw;
-    // this->initBullet();
     this->initReact();
   }
 
@@ -165,7 +163,6 @@ class Cube : public GameObject {
 
   void setEnableGradient(bool enable) { m_enableBlueGradient = enable ? 1.0f : 0.0f; }
 
-  // btRigidBody* getRigidBody() { return m_rigidBody; }
   reactphysics3d::CollisionBody* getCollisionBody() { return m_body; }
 
   const glm::mat4& getModel() const { return m_model; }

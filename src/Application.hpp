@@ -31,7 +31,7 @@ struct MouseParams {
 
 struct CubeStruct {
   glm::vec3 position;
-  Cube cube;
+  Cube* cube;
   float rotation;
 };
 

@@ -24,6 +24,7 @@
 #include "shapes/Crosshair.hpp"
 #include "OBBIntersection.hpp"
 #include "ReactUtility.hpp"
+#include "generators/ObjectGenerator.hpp"
 
 auto Application::initApp() -> int {
   int glfwInitRes = glfwInit();
@@ -121,16 +122,15 @@ void Application::run() {
   for (int i = 0; i < 10; i++) {
     cubes.push_back(
         {cubePositions.at(i),
-         Cube{&m_shaders.at("Cube"), &m_Textures.at("Cube"), physicsProperties},
+         (Cube*)ObjectGenerator::create(ObjectType::CUBE, m_shaders.at("Cube"),
+                                        m_Textures.at("Cube"), physicsProperties),
          cubeRotations.at(i)});
   }
 
   for (CubeStruct& cubeStruct : cubes) {
-    cubeStruct.cube.movePosition(cubeStruct.position);
-    cubeStruct.cube.setEnableGradient(true);
-    // TODO: this is clunky - update to be heap allocated or something
-    cubeStruct.cube.getCollisionBody()->setUserData(&(cubeStruct.cube));
-    // cubeStruct.cube.setScale(0.8f);
+    cubeStruct.cube->movePosition(cubeStruct.position);
+    cubeStruct.cube->setEnableGradient(true);
+    cubeStruct.cube->setScale(0.8f);
   }
 
   handler.bindScaleCommands(cubes);
@@ -172,16 +172,15 @@ void Application::run() {
     // update camera of each shader
     updateShaderCamera();
 
-    // draw cubes
+    // draw objects
     reactphysics3d::CollisionBody* cb = this->raycast(firstRayCallback);
     if (cb != nullptr) {
-      // TODO: make this a <GameObject>* in the future
       GameObject* obj = (GameObject*)cb->getUserData();
       obj->setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
     }
 
     for (CubeStruct& cubeStruct : cubes) {
-      cubeStruct.cube.draw();
+      cubeStruct.cube->draw();
     }
 
     // draw crosshair
@@ -241,8 +240,8 @@ void Application::logicUpdate(TimePointTimer& logicTimer, std::vector<CubeStruct
     colors.r += increment;
 
     for (CubeStruct& cubeStruct : cubes) {
-      cubeStruct.cube.setColor(colors);
-      cubeStruct.cube.rotate(cubeStruct.rotation);
+      cubeStruct.cube->setColor(colors);
+      cubeStruct.cube->rotate(cubeStruct.rotation);
     }
   }
 }

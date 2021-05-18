@@ -19,4 +19,5 @@ class FirstRayCallback : public reactphysics3d::RaycastCallback {
   reactphysics3d::CollisionBody* closestBody = nullptr;
   reactphysics3d::decimal closestHitFraction = reactphysics3d::decimal(1.0);
 };
+
 #endif

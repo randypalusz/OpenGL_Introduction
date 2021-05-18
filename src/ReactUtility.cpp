@@ -14,8 +14,6 @@ reactphysics3d::decimal FirstRayCallback::notifyRaycastHit(
       closestHitFraction = info.hitFraction;
     }
   }
-  // Cube* cube = (Cube*)info.body->getUserData();
-  // cube->setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
   return reactphysics3d::decimal(1.0);
 }

@@ -42,6 +42,7 @@ set(HEADERS
   ${SRC_DIR}/vbLayout.hpp
   ${SRC_DIR}/OBBIntersection.hpp
   ${SRC_DIR}/ReactUtility.hpp
+  ${SRC_DIR}/generators/ObjectGenerator.hpp
 )
 
 # adding executable, changing executable suffix for windows

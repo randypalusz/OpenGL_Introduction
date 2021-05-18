@@ -72,7 +72,7 @@ class ScaleCubesCommand : Command {
 
   virtual void execute(float deltaTime) {
     for (CubeStruct& cube : m_cubes) {
-      cube.cube.adjustScale(m_scaleFactor * deltaTime);
+      cube.cube->adjustScale(m_scaleFactor * deltaTime);
     }
   };
   virtual void execute() {}
