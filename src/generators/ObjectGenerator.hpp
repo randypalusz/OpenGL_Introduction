@@ -17,6 +17,8 @@ enum class ObjectType { CUBE };
 // allocated objects
 
 // TODO: make shape constructors private so that they can only be called here
+
+// TODO: move to returning a unique_ptr
 class ObjectGenerator {
  public:
   static GameObject* create(ObjectType type, Shader& shader, Texture& texture,
