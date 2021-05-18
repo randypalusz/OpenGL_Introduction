@@ -15,6 +15,8 @@ enum class ObjectType { CUBE };
 // should only be created through this API in the future
 // also evaluate whether this is the best way of doing things, as moving towards heap
 // allocated objects
+
+// TODO: make shape constructors private so that they can only be called here
 class ObjectGenerator {
  public:
   static GameObject* create(ObjectType type, Shader& shader, Texture& texture,
