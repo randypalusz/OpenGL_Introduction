@@ -139,6 +139,10 @@ class Cube : public GameObject {
     glm::mat4 rotation = glm::toMat4(quat);
     m_rotateMat = m_rotateMat * rotation;
   }
+  void setRotation(const float radians) {
+    m_updateModel = true;
+    m_rotateMat = glm::toMat4(glm::angleAxis(radians, glm::vec3(1.0f, 1.0f, 1.0f)));
+  }
   void setScale(const float scale) {
     m_updateModel = true;
     this->resetScale();

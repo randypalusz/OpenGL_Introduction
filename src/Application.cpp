@@ -131,6 +131,7 @@ void Application::run() {
     cubeStruct.cube->movePosition(cubeStruct.position);
     cubeStruct.cube->setEnableGradient(true);
     cubeStruct.cube->setScale(0.8f);
+    cubeStruct.cube->setRotation(cubeStruct.rotation);
   }
 
   handler.bindScaleCommands(cubes);
