@@ -26,7 +26,7 @@ class ObjectGenerator {
     GameObject* obj = nullptr;
     switch (type) {
       case ObjectType::CUBE:
-        obj = new Cube(&shader, &texture, props);
+        obj = new Cube(&shader, &texture, &props);
         break;
       default:
         return nullptr;
