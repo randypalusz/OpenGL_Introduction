@@ -64,21 +64,22 @@ class CloseWindowCommand : Command {
   GLFWwindow* m_window;
 };
 
-class ScaleCubesCommand : Command {
+class ScaleObjectsCommand : Command {
  public:
-  ScaleCubesCommand(float scaleFactor, std::vector<CubeStruct>& cubes) : m_cubes(cubes) {
+  ScaleObjectsCommand(float scaleFactor, std::vector<GameObject*>& objects)
+      : m_objects(objects) {
     m_scaleFactor = scaleFactor;
   };
 
   virtual void execute(float deltaTime) {
-    for (CubeStruct& cube : m_cubes) {
-      cube.cube->adjustScale(m_scaleFactor * deltaTime);
+    for (GameObject* object : m_objects) {
+      object->adjustScale(m_scaleFactor * deltaTime);
     }
   };
   virtual void execute() {}
 
  private:
-  std::vector<CubeStruct>& m_cubes;
+  std::vector<GameObject*>& m_objects;
   float m_scaleFactor;
 };
 #endif

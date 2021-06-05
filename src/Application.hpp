@@ -4,7 +4,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-// #include <btBulletDynamicsCommon.h>
 #include <reactphysics3d/reactphysics3d.h>
 
 #include <vector>
@@ -27,12 +26,6 @@ struct MouseParams {
     lastX = (float)width / 2.0f;
     lastY = (float)height / 2.0f;
   }
-};
-
-struct CubeStruct {
-  glm::vec3 position;
-  Cube* cube;
-  float rotation;
 };
 
 class Application {
@@ -62,7 +55,7 @@ class Application {
   // void initBullet();
   void initReact();
   void updateShaderCamera();
-  void logicUpdate(TimePointTimer& timer, std::vector<CubeStruct>& cubes,
+  void logicUpdate(TimePointTimer& timer, const std::vector<float>& rotations,
                    glm::vec4& colors, float& increment);
   reactphysics3d::CollisionBody* raycast(FirstRayCallback& callback);
   int m_width;
@@ -74,6 +67,7 @@ class Application {
   GLFWwindow* m_window = nullptr;
   Camera* m_camera = new Camera(glm::vec3{0.0f, 0.0f, 3.0f});
   MouseParams* m_mouseParams;
+  std::vector<GameObject*> m_objects{};
   std::unordered_map<std::string, Shader> m_shaders;
   std::unordered_map<std::string, Shader> m_cameraIndependentShaders;
   std::unordered_map<std::string, Texture> m_Textures;

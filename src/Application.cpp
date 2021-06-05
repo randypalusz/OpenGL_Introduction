@@ -118,23 +118,17 @@ void Application::run() {
       glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
   std::vector<float> cubeRotations{0.05f, 0.6f,  0.8f,  0.1f,  0.3f,
                                    0.2f,  0.16f, 0.32f, 0.23f, 0.02f};
-  std::vector<CubeStruct> cubes;
   for (int i = 0; i < 10; i++) {
-    cubes.push_back(
-        {cubePositions.at(i),
-         (Cube*)ObjectGenerator::create(ObjectType::CUBE, m_shaders.at("Cube"),
-                                        m_Textures.at("Cube"), physicsProperties),
-         cubeRotations.at(i)});
+    Cube* currentCube = (Cube*)ObjectGenerator::create(
+        ObjectType::CUBE, m_shaders.at("Cube"), m_Textures.at("Cube"), physicsProperties);
+    currentCube->movePosition(cubePositions.at(i));
+    currentCube->setRotation(cubeRotations.at(i));
+    currentCube->setEnableGradient(true);
+    currentCube->setScale(0.8f);
+    m_objects.push_back(currentCube);
   }
 
-  for (CubeStruct& cubeStruct : cubes) {
-    cubeStruct.cube->movePosition(cubeStruct.position);
-    cubeStruct.cube->setEnableGradient(true);
-    cubeStruct.cube->setScale(0.8f);
-    cubeStruct.cube->setRotation(cubeStruct.rotation);
-  }
-
-  handler.bindScaleCommands(cubes);
+  handler.bindScaleCommands(m_objects);
 
   glm::vec4 colors{0.15f, 1.0f, 1.0f, 1.0f};
   Timer<float> renderTimer{0.0f};
@@ -165,7 +159,7 @@ void Application::run() {
 #endif
 
     // update logic
-    logicUpdate(logicTimer, cubes, colors, increment);
+    logicUpdate(logicTimer, cubeRotations, colors, increment);
 
     // process input
     handler.handleInput(renderTimer.deltaTime);
@@ -180,8 +174,8 @@ void Application::run() {
       obj->setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
     }
 
-    for (CubeStruct& cubeStruct : cubes) {
-      cubeStruct.cube->draw();
+    for (GameObject* object : m_objects) {
+      object->draw();
     }
 
     // draw crosshair
@@ -227,8 +221,9 @@ void Application::updateShaderCamera() {
   }
 }
 
-void Application::logicUpdate(TimePointTimer& logicTimer, std::vector<CubeStruct>& cubes,
-                              glm::vec4& colors, float& increment) {
+void Application::logicUpdate(TimePointTimer& logicTimer,
+                              const std::vector<float>& rotations, glm::vec4& colors,
+                              float& increment) {
   if (logicTimer.deltaTime >= 5000) {
     logicTimer.tick();
 
@@ -240,9 +235,15 @@ void Application::logicUpdate(TimePointTimer& logicTimer, std::vector<CubeStruct
     }
     colors.r += increment;
 
-    for (CubeStruct& cubeStruct : cubes) {
-      cubeStruct.cube->setColor(colors);
-      cubeStruct.cube->rotate(cubeStruct.rotation);
+    int i = 0;
+    for (GameObject* object : m_objects) {
+      object->setColor(colors);
+      try {
+        object->rotate(rotations.at(i));
+      } catch (std::out_of_range const& exc) {
+        continue;
+      }
+      i++;
     }
   }
 }

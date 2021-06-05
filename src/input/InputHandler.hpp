@@ -44,9 +44,9 @@ class InputHandler {
     }
   }
 
-  void bindScaleCommands(std::vector<CubeStruct>& cubes) {
-    plus = (Command*)new ScaleCubesCommand(0.8f, cubes);
-    minus = (Command*)new ScaleCubesCommand(-0.8f, cubes);
+  void bindScaleCommands(std::vector<GameObject*>& objects) {
+    plus = (Command*)new ScaleObjectsCommand(0.8f, objects);
+    minus = (Command*)new ScaleObjectsCommand(-0.8f, objects);
   }
 
  private:
